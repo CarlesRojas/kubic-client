@@ -24,4 +24,9 @@
     position: relative;
     height: 100%;
     width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgb(80, 131, 209);
+    background: linear-gradient(-180deg, rgba(80, 131, 209, 1) 0%, rgba(145, 181, 253, 1) 100%);
 }
