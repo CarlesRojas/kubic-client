@@ -30,3 +30,76 @@
     background: rgb(80, 131, 209);
     background: linear-gradient(-180deg, rgba(80, 131, 209, 1) 0%, rgba(145, 181, 253, 1) 100%);
 }
+
+// #######################################
+//      GESTURES
+// #######################################
+
+.Gestures {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    touch-action: none;
+
+    .click {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        touch-action: none;
+    }
+
+    .rotateContainer {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        display: flex;
+        flex-direction: column;
+
+        .rotateY {
+            position: relative;
+            width: 100%;
+            display: flex;
+            flex-grow: 1;
+            touch-action: none;
+
+            .rotateX {
+                height: 100%;
+                width: 50%;
+                background: rgba(255, 0, 0, 0.2);
+                touch-action: none;
+            }
+
+            .rotateZ {
+                height: 100%;
+                width: 50%;
+                background: rgba(0, 255, 0, 0.2);
+                touch-action: none;
+            }
+        }
+
+        .rotateBase {
+            width: 100%;
+            background: rgba(0, 0, 255, 0.2);
+            touch-action: none;
+        }
+    }
+}
+
+// #######################################
+//      UI
+// #######################################
+
+.UI {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    pointer-events: none;
+}
