@@ -1,12 +1,12 @@
 import { useRef, useEffect, useState } from "react";
 import { useDrag } from "@use-gesture/react";
 
-export default function Gestures({ gameDimensions, onRotateBase, onRotateX, onRotateY, onRotateZ, onClick }) {
+export default function Gestures({ gameDimensions, onRotateBase, onMove, onRotateX, onRotateY, onRotateZ, onClick }) {
     // #################################################
     //   GESTURES
     // #################################################
 
-    const gestureThreshold = gameDimensions.width * 0.2;
+    const rotateBaseThreshold = gameDimensions.width * 0.2;
 
     const rotateBaseGestureBind = useDrag(
         ({ event, down, movement: [mx], velocity: [vx], direction: [dx] }) => {
@@ -14,11 +14,42 @@ export default function Gestures({ gameDimensions, onRotateBase, onRotateX, onRo
 
             if (!down) {
                 const velX = vx * dx;
-                if ((mx > gestureThreshold && velX >= 0) || velX > 1) onRotateBase(true);
-                else if ((mx < -gestureThreshold && velX <= 0) || velX < -1) onRotateBase(false);
+                if ((mx > rotateBaseThreshold && velX >= 0) || velX > 0.3) onRotateBase(true);
+                else if ((mx < -rotateBaseThreshold && velX <= 0) || velX < -0.3) onRotateBase(false);
             }
         },
         { filterTaps: true, axis: "x" }
+    );
+
+    const moveInitial = useRef({ x: 0, y: 0 });
+    const moveThreshold = gameDimensions.width * 0.1;
+
+    const moveGestureBind = useDrag(
+        ({ event, first, down, movement: [mx, my] }) => {
+            event.stopPropagation();
+
+            if (first) moveInitial.current = { x: 0, y: 0 };
+
+            if (down) {
+                const movX = mx - moveInitial.current.x;
+                const movY = my - moveInitial.current.y;
+
+                const disp = Math.sqrt(movX * movX + movY * movY);
+
+                if (
+                    Math.abs(movX) > moveThreshold * 0.3 &&
+                    Math.abs(movY) > moveThreshold * 0.3 &&
+                    disp > moveThreshold
+                ) {
+                    moveInitial.current = { x: mx, y: my };
+                    if (movX > 0 && movY > 0) onMove("bottomRight");
+                    else if (movX < 0 && movY > 0) onMove("bottomLeft");
+                    else if (movX > 0 && movY < 0) onMove("topRight");
+                    else if (movX < 0 && movY < 0) onMove("topLeft");
+                }
+            }
+        },
+        { filterTaps: true }
     );
 
     // #################################################
@@ -46,19 +77,8 @@ export default function Gestures({ gameDimensions, onRotateBase, onRotateX, onRo
     return (
         <div className="Gestures" ref={gesturesRef}>
             <div className="click"></div>
-
-            <div className="rotateContainer">
-                <div className="rotateY">
-                    <div className="rotateX"> </div>
-                    <div className="rotateZ"> </div>
-                </div>
-
-                <div
-                    className="rotateBase"
-                    style={{ height: `${rotateBaseHeight}px` }}
-                    {...rotateBaseGestureBind()}
-                ></div>
-            </div>
+            <div className="moveTetro" {...moveGestureBind()}></div>
+            <div className="rotateBase" style={{ height: `${rotateBaseHeight}px` }} {...rotateBaseGestureBind()}></div>
         </div>
     );
 }

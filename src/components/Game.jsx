@@ -137,6 +137,25 @@ export default function Game() {
         [SpawnNextTetro]
     );
 
+    const moveTetro = useCallback(({ x, z }) => {
+        const newTargetPos = [];
+
+        for (let i = 0; i < currentTetroTargetPos.current.length; i++) {
+            newTargetPos.push({
+                ...currentTetroTargetPos.current[i],
+                x: currentTetroTargetPos.current[i].x + x,
+                z: currentTetroTargetPos.current[i].z + z,
+            });
+        }
+
+        if (!isPosCorrect(newTargetPos)) {
+            // ROJAS PLAY HIT WALL SOUND
+            return;
+        }
+
+        currentTetroTargetPos.current = newTargetPos;
+    }, []);
+
     // #################################################
     //   MOVE TETRO
     // #################################################
@@ -148,7 +167,7 @@ export default function Game() {
             const tetro = currentTetro.current[i];
             const targetPos = currentTetroTargetPos.current[i];
 
-            const step = (cubeSize / 200) * deltaTime;
+            const step = (cubeSize / 50) * deltaTime;
 
             const { worldX, worldY, worldZ } = gridPosToWorldPos(targetPos);
 
@@ -360,13 +379,20 @@ export default function Game() {
         else levelTargetAngle.current = levelTargetAngle.current - THREE.Math.degToRad(90);
     };
 
+    const onMove = (direction) => {
+        moveTetro({
+            x: direction === "topLeft" ? -1 : direction === "bottomRight" ? 1 : 0,
+            z: direction === "topRight" ? -1 : direction === "bottomLeft" ? 1 : 0,
+        });
+    };
+
     // #################################################
     //   RENDER
     // #################################################
 
     return (
         <div className="Game" ref={gameRef}>
-            <Gestures gameDimensions={gameDimensions} onRotateBase={onRotateBase} />
+            <Gestures gameDimensions={gameDimensions} onRotateBase={onRotateBase} onMove={onMove} />
             <UI />
         </div>
     );
