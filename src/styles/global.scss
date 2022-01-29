@@ -1,0 +1,102 @@
+@import "./variables";
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: "Montserrat", sans-serif;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    overscroll-behavior: touch;
+}
+
+html {
+    position: relative;
+    height: 100%;
+    width: 100%;
+    font-size: $fontSize;
+    touch-action: none;
+}
+
+body {
+    user-select: none;
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    background-color: $background;
+    color: $text;
+    font-family: "Montserrat", sans-serif;
+    touch-action: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overscroll-behavior-y: contain;
+}
+
+#root {
+    position: relative;
+    height: 100%;
+    width: 100%;
+}
+
+img,
+video {
+    display: block;
+}
+
+// Autofill color
+:-webkit-autofill,
+:-webkit-autofill:hover,
+:-webkit-autofill:focus {
+    transition: background-color 10000s;
+    width: inherit;
+    box-sizing: border-box;
+    border: 0px solid rgba(255, 255, 255, 0);
+    border-radius: 1000px;
+    padding: 0 10px;
+    -webkit-text-fill-color: $background;
+}
+
+//Remove focus
+:focus {
+    outline: none;
+}
+::-moz-focus-inner {
+    border: 0;
+}
+
+input {
+    border: none;
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    margin: 0;
+    -webkit-appearance: none;
+}
+
+/* Firefox */
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+/* width */
+::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 100vw;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}

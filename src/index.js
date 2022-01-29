@@ -1,17 +1,34 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import { StrictMode } from "react";
+import * as serviceWorker from "./serviceWorker";
+import ReactDOM from "react-dom";
+import App from "./App";
+import "./styles/main.scss";
+
+// Contexts
+import EventsProvider from "./contexts/Events";
+import UtilsProvider from "./contexts/Utils";
+import APIProvider from "./contexts/API";
+import GlobalStateProvider from "./contexts/GlobalState";
+import DataProvider from "./contexts/Data";
+import MediaQueryProvider from "./contexts/MediaQuery";
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
+    <StrictMode>
+        <EventsProvider>
+            <UtilsProvider>
+                <GlobalStateProvider>
+                    <DataProvider>
+                        <APIProvider>
+                            <MediaQueryProvider>
+                                <App />
+                            </MediaQueryProvider>
+                        </APIProvider>
+                    </DataProvider>
+                </GlobalStateProvider>
+            </UtilsProvider>
+        </EventsProvider>
+    </StrictMode>,
+    document.getElementById("root")
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+serviceWorker.register();
