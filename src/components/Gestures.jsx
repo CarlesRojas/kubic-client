@@ -1,7 +1,15 @@
 import { useRef, useEffect, useState } from "react";
 import { useDrag } from "@use-gesture/react";
 
-export default function Gestures({ gameDimensions, onRotateBase, onMove, onRotateX, onRotateY, onRotateZ, onClick }) {
+export default function Gestures({
+    gameDimensions,
+    handleRotateBase,
+    handleMove,
+    handleClick,
+    onRotateX,
+    onRotateY,
+    onRotateZk,
+}) {
     // #################################################
     //   GESTURES
     // #################################################
@@ -14,8 +22,8 @@ export default function Gestures({ gameDimensions, onRotateBase, onMove, onRotat
 
             if (!down) {
                 const velX = vx * dx;
-                if ((mx > rotateBaseThreshold && velX >= 0) || velX > 0.3) onRotateBase(true);
-                else if ((mx < -rotateBaseThreshold && velX <= 0) || velX < -0.3) onRotateBase(false);
+                if ((mx > rotateBaseThreshold && velX >= 0) || velX > 0.3) handleRotateBase(true);
+                else if ((mx < -rotateBaseThreshold && velX <= 0) || velX < -0.3) handleRotateBase(false);
             }
         },
         { filterTaps: true, axis: "x" }
@@ -42,10 +50,10 @@ export default function Gestures({ gameDimensions, onRotateBase, onMove, onRotat
                     disp > moveThreshold
                 ) {
                     moveInitial.current = { x: mx, y: my };
-                    if (movX > 0 && movY > 0) onMove("bottomRight");
-                    else if (movX < 0 && movY > 0) onMove("bottomLeft");
-                    else if (movX > 0 && movY < 0) onMove("topRight");
-                    else if (movX < 0 && movY < 0) onMove("topLeft");
+                    if (movX > 0 && movY > 0) handleMove("bottomRight");
+                    else if (movX < 0 && movY > 0) handleMove("bottomLeft");
+                    else if (movX > 0 && movY < 0) handleMove("topRight");
+                    else if (movX < 0 && movY < 0) handleMove("topLeft");
                 }
             }
         },
@@ -76,8 +84,7 @@ export default function Gestures({ gameDimensions, onRotateBase, onMove, onRotat
 
     return (
         <div className="Gestures" ref={gesturesRef}>
-            <div className="click"></div>
-            <div className="moveTetro" {...moveGestureBind()}></div>
+            <div className="moveTetro" {...moveGestureBind()} onClick={handleClick}></div>
             <div className="rotateBase" style={{ height: `${rotateBaseHeight}px` }} {...rotateBaseGestureBind()}></div>
         </div>
     );

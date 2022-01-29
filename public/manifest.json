@@ -95,6 +95,6 @@
     "orientation": "any",
     "start_url": ".",
     "display": "standalone",
-    "theme_color": "#ebebeb",
-    "background_color": "#ebebeb"
+    "theme_color": "#000000",
+    "background_color": "#000000"
 }

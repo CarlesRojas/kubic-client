@@ -22,6 +22,7 @@ export default function Game() {
 
     const level = useRef();
     const grid = useRef([[[]]]);
+    const lost = useRef(false);
 
     // #################################################
     //   DIFFICULTY
@@ -48,6 +49,8 @@ export default function Game() {
     const currentTetro = useRef([]);
     const currentTetroTargetPos = useRef([]);
     const lastFallTimestamp = useRef(0);
+    const directFalling = useRef(false);
+    const [animating, setAnimating] = useState(false);
 
     const SetNextTetro = () => {
         const { tetrominos } = constants;
@@ -60,6 +63,9 @@ export default function Game() {
         const randomTetro = tetrominos[nextTetro.current];
         currentTetro.current = [];
         currentTetroTargetPos.current = [];
+        directFalling.current = false;
+
+        if (lost.current) return;
 
         for (let i = 0; i < randomTetro.positions.length; i++) {
             const cube = Cube(randomTetro.color);
@@ -103,6 +109,8 @@ export default function Game() {
 
     const keepFalling = useCallback(
         (timestamp) => {
+            if (directFalling.current) return;
+
             const { gridY } = constants;
             if (timestamp - lastFallTimestamp.current >= speed.current) {
                 const newTargetPos = [];
@@ -120,14 +128,15 @@ export default function Game() {
                         const tetro = currentTetro.current[i];
                         const targetPos = currentTetroTargetPos.current[i];
 
-                        if (targetPos.y >= gridY) return; // ROJAS GAME LOST
+                        if (targetPos.y >= gridY) {
+                            lost.current = true;
+                            break;
+                        }
                         grid.current[targetPos.x][targetPos.y][targetPos.z] = tetro;
                     }
 
                     // Spawn next tetro
                     SpawnNextTetro();
-
-                    return;
                 }
 
                 currentTetroTargetPos.current = newTargetPos;
@@ -136,6 +145,56 @@ export default function Game() {
         },
         [SpawnNextTetro]
     );
+
+    const fallDirectly = useCallback(() => {
+        const { gridY } = constants;
+
+        var newTargetPos = [];
+        var lastCorrectPos = [];
+
+        for (let i = 0; i < currentTetroTargetPos.current.length; i++)
+            newTargetPos.push({ ...currentTetroTargetPos.current[i] });
+
+        var yDisp = 1;
+        do {
+            lastCorrectPos = [];
+            for (let i = 0; i < newTargetPos.length; i++) lastCorrectPos.push({ ...newTargetPos[i] });
+            newTargetPos = [];
+
+            for (let i = 0; i < currentTetroTargetPos.current.length; i++) {
+                newTargetPos.push({
+                    ...currentTetroTargetPos.current[i],
+                    y: currentTetroTargetPos.current[i].y - yDisp,
+                });
+            }
+
+            yDisp++;
+        } while (isPosCorrect(newTargetPos) && yDisp < gridY + 5);
+
+        // Save tetro to grid
+        for (let i = 0; i < currentTetro.current.length; i++) {
+            const tetro = currentTetro.current[i];
+            const targetPos = lastCorrectPos[i];
+
+            if (targetPos.y >= gridY) {
+                lost.current = true;
+                break;
+            }
+
+            grid.current[targetPos.x][targetPos.y][targetPos.z] = tetro;
+        }
+
+        currentTetroTargetPos.current = lastCorrectPos;
+    }, []);
+
+    useEffect(() => {
+        if (!animating && directFalling.current) {
+            directFalling.current = false;
+
+            // Spawn next tetro
+            SpawnNextTetro();
+        }
+    }, [animating, SpawnNextTetro]);
 
     const moveTetro = useCallback(({ x, z }) => {
         const newTargetPos = [];
@@ -163,6 +222,8 @@ export default function Game() {
     const animateBlocks = useCallback((deltaTime) => {
         const { cubeSize } = constants;
 
+        var anim = false;
+
         for (let i = 0; i < currentTetro.current.length; i++) {
             const tetro = currentTetro.current[i];
             const targetPos = currentTetroTargetPos.current[i];
@@ -171,15 +232,32 @@ export default function Game() {
 
             const { worldX, worldY, worldZ } = gridPosToWorldPos(targetPos);
 
-            if (tetro.position.x > worldX) tetro.position.x = Math.max(worldX, tetro.position.x - step);
-            else if (tetro.position.x < worldX) tetro.position.x = Math.min(worldX, tetro.position.x + step);
+            if (tetro.position.x > worldX) {
+                anim = true;
+                tetro.position.x = Math.max(worldX, tetro.position.x - step);
+            } else if (tetro.position.x < worldX) {
+                anim = true;
+                tetro.position.x = Math.min(worldX, tetro.position.x + step);
+            }
 
-            if (tetro.position.y > worldY) tetro.position.y = Math.max(worldY, tetro.position.y - step);
-            else if (tetro.position.y < worldY) tetro.position.y = Math.min(worldY, tetro.position.y + step);
+            if (tetro.position.y > worldY) {
+                anim = true;
+                tetro.position.y = Math.max(worldY, tetro.position.y - step);
+            } else if (tetro.position.y < worldY) {
+                anim = true;
+                tetro.position.y = Math.min(worldY, tetro.position.y + step);
+            }
 
-            if (tetro.position.z > worldZ) tetro.position.z = Math.max(worldZ, tetro.position.z - step);
-            else if (tetro.position.z < worldZ) tetro.position.z = Math.min(worldZ, tetro.position.z + step);
+            if (tetro.position.z > worldZ) {
+                anim = true;
+                tetro.position.z = Math.max(worldZ, tetro.position.z - step);
+            } else if (tetro.position.z < worldZ) {
+                anim = true;
+                tetro.position.z = Math.min(worldZ, tetro.position.z + step);
+            }
         }
+
+        setAnimating(anim);
     }, []);
 
     const gridPosToWorldPos = ({ x, y, z }) => {
@@ -374,16 +452,21 @@ export default function Game() {
     //   USER ACTIONS
     // #################################################
 
-    const onRotateBase = (rotateRight) => {
+    const handleRotateBase = (rotateRight) => {
         if (rotateRight) levelTargetAngle.current = levelTargetAngle.current + THREE.Math.degToRad(90);
         else levelTargetAngle.current = levelTargetAngle.current - THREE.Math.degToRad(90);
     };
 
-    const onMove = (direction) => {
+    const handleMove = (direction) => {
         moveTetro({
             x: direction === "topLeft" ? -1 : direction === "bottomRight" ? 1 : 0,
             z: direction === "topRight" ? -1 : direction === "bottomLeft" ? 1 : 0,
         });
+    };
+
+    const handleClick = () => {
+        fallDirectly();
+        directFalling.current = true;
     };
 
     // #################################################
@@ -392,7 +475,12 @@ export default function Game() {
 
     return (
         <div className="Game" ref={gameRef}>
-            <Gestures gameDimensions={gameDimensions} onRotateBase={onRotateBase} onMove={onMove} />
+            <Gestures
+                gameDimensions={gameDimensions}
+                handleRotateBase={handleRotateBase}
+                handleMove={handleMove}
+                handleClick={handleClick}
+            />
             <UI />
         </div>
     );
