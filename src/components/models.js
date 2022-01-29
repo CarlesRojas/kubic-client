@@ -2,19 +2,19 @@ import * as THREE from "three";
 import constants from "../constants";
 
 export const Floor = () => {
-    const floor = new THREE.Group();
+    const { gridX, gridZ, cubeSize } = constants;
 
-    const { gridX, gridZ } = constants;
+    const floor = new THREE.Group();
 
     for (let i = 0; i < gridX; i++) {
         for (let j = 0; j < gridZ; j++) {
             var cube = new THREE.Mesh(
-                new THREE.BoxBufferGeometry(9.5, 4.75, 9.5),
+                new THREE.BoxBufferGeometry(cubeSize * 0.95, (cubeSize / 2) * 0.95, cubeSize * 0.95),
                 new THREE.MeshLambertMaterial({ color: "#7d7d7d" })
             );
-            cube.position.x = i * 10 - (gridX / 2) * 10 + 5;
-            cube.position.z = j * 10 - (gridZ / 2) * 10 + 5;
-            cube.position.y = -2.5;
+            cube.position.x = i * cubeSize - (gridX / 2) * cubeSize + cubeSize / 2;
+            cube.position.z = j * cubeSize - (gridZ / 2) * cubeSize + cubeSize / 2;
+            cube.position.y = -cubeSize / 4;
             floor.add(cube);
         }
     }
@@ -22,7 +22,27 @@ export const Floor = () => {
     return floor;
 };
 
+export const Grid = () => {
+    const { gridY, gridX, cubeSize } = constants;
+
+    const grid = new THREE.Group();
+
+    for (let i = 0; i < gridY; i++) {
+        const layer = new THREE.GridHelper(gridX * cubeSize, gridX, "#ffd500", "#ffd500");
+        layer.position.y = cubeSize * i;
+        grid.add(layer);
+    }
+
+    return grid;
+};
+
 export const Cube = (color) => {
-    var cube = new THREE.Mesh(new THREE.BoxBufferGeometry(9.5, 9.5, 9.5), new THREE.MeshLambertMaterial({ color }));
+    const { cubeSize } = constants;
+
+    var cube = new THREE.Mesh(
+        new THREE.BoxBufferGeometry(cubeSize * 0.95, cubeSize * 0.95, cubeSize * 0.95),
+        new THREE.MeshLambertMaterial({ color })
+    );
+
     return cube;
 };
