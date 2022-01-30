@@ -113,6 +113,8 @@ export default function Game() {
 
             const { gridY } = constants;
             if (timestamp - lastFallTimestamp.current >= speed.current) {
+                lastFallTimestamp.current = timestamp;
+
                 const newTargetPos = [];
 
                 for (let i = 0; i < currentTetroTargetPos.current.length; i++) {
@@ -132,15 +134,16 @@ export default function Game() {
                             lost.current = true;
                             break;
                         }
+
                         grid.current[targetPos.x][targetPos.y][targetPos.z] = tetro;
                     }
 
                     // Spawn next tetro
                     SpawnNextTetro();
+                    return;
                 }
 
                 currentTetroTargetPos.current = newTargetPos;
-                lastFallTimestamp.current = timestamp;
             }
         },
         [SpawnNextTetro]
@@ -458,6 +461,8 @@ export default function Game() {
     };
 
     const handleMove = (direction) => {
+        if (directFalling.current) return;
+
         moveTetro({
             x: direction === "topLeft" ? -1 : direction === "bottomRight" ? 1 : 0,
             z: direction === "topRight" ? -1 : direction === "bottomLeft" ? 1 : 0,
@@ -465,6 +470,8 @@ export default function Game() {
     };
 
     const handleClick = () => {
+        if (directFalling.current) return;
+
         fallDirectly();
         directFalling.current = true;
     };

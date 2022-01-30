@@ -3,4 +3,4 @@
 ## TODO
 
 -   [ ] Bug with move tetrominos after level is rotated
--   [ ] Bug with spawning a new tetromino while a gesture is active
+-   [x] Bug with spawning a new tetromino while a gesture is active
