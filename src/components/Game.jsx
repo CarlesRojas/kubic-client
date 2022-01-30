@@ -503,13 +503,9 @@ export default function Game() {
 
     return (
         <div className="Game" ref={gameRef}>
-            <Gestures
-                gameDimensions={gameDimensions}
-                handleRotateBase={handleRotateBase}
-                handleMove={handleMove}
-                handleClick={handleClick}
-            />
-            <UI />
+            <Gestures gameDimensions={gameDimensions} handleMove={handleMove} handleClick={handleClick} />
+
+            <UI gameDimensions={gameDimensions} handleRotateBase={handleRotateBase} />
         </div>
     );
 }

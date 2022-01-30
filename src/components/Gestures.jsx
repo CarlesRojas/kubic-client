@@ -1,33 +1,10 @@
-import { useRef, useEffect, useState } from "react";
+import { useRef } from "react";
 import { useDrag } from "@use-gesture/react";
 
-export default function Gestures({
-    gameDimensions,
-    handleRotateBase,
-    handleMove,
-    handleClick,
-    onRotateX,
-    onRotateY,
-    onRotateZk,
-}) {
+export default function Gestures({ gameDimensions, handleMove, handleClick, onRotateX, onRotateY, onRotateZk }) {
     // #################################################
     //   GESTURES
     // #################################################
-
-    const rotateBaseThreshold = gameDimensions.width * 0.2;
-
-    const rotateBaseGestureBind = useDrag(
-        ({ event, down, movement: [mx], velocity: [vx], direction: [dx] }) => {
-            event.stopPropagation();
-
-            if (!down) {
-                const velX = vx * dx;
-                if ((mx > rotateBaseThreshold && velX >= 0) || velX > 0.3) handleRotateBase(true);
-                else if ((mx < -rotateBaseThreshold && velX <= 0) || velX < -0.3) handleRotateBase(false);
-            }
-        },
-        { filterTaps: true, axis: "x" }
-    );
 
     const moveInitial = useRef({ x: 0, y: 0 });
     const moveThreshold = gameDimensions.width * 0.1;
@@ -61,31 +38,12 @@ export default function Gestures({
     );
 
     // #################################################
-    //   RESIZE
-    // #################################################
-
-    const gesturesRef = useRef();
-    const [rotateBaseHeight, setRotateBaseHeight] = useState(0);
-
-    useEffect(() => {
-        const box = gesturesRef.current.getBoundingClientRect();
-
-        if (box.height > gameDimensions.height) {
-            const gamePart = gameDimensions.height * 0.25;
-            const restPart = (box.height - gameDimensions.height) / 2;
-
-            setRotateBaseHeight(gamePart + restPart);
-        } else setRotateBaseHeight(gameDimensions.height * 0.25);
-    }, [gameDimensions]);
-
-    // #################################################
     //   RENDER
     // #################################################
 
     return (
-        <div className="Gestures" ref={gesturesRef}>
+        <div className="Gestures">
             <div className="moveTetro" {...moveGestureBind()} onClick={handleClick}></div>
-            <div className="rotateBase" style={{ height: `${rotateBaseHeight}px` }} {...rotateBaseGestureBind()}></div>
         </div>
     );
 }

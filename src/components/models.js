@@ -10,7 +10,7 @@ export const Floor = () => {
         for (let j = 0; j < gridZ; j++) {
             var cube = new THREE.Mesh(
                 new THREE.BoxBufferGeometry(cubeSize * 0.95, (cubeSize / 2) * 0.95, cubeSize * 0.95),
-                new THREE.MeshLambertMaterial({ color: "#7d7d7d" })
+                new THREE.MeshLambertMaterial({ color: "#666666" })
             );
             cube.position.x = i * cubeSize - (gridX / 2) * cubeSize + cubeSize / 2;
             cube.position.z = j * cubeSize - (gridZ / 2) * cubeSize + cubeSize / 2;
