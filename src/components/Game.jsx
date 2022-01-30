@@ -490,12 +490,14 @@ export default function Game() {
         }
     };
 
-    const handleClick = () => {
+    const handleDoubleClick = useCallback(() => {
         if (directFalling.current) return;
+
+        console.log("DoubleClick");
 
         fallDirectly();
         directFalling.current = true;
-    };
+    }, [fallDirectly]);
 
     // #################################################
     //   RENDER
@@ -503,7 +505,7 @@ export default function Game() {
 
     return (
         <div className="Game" ref={gameRef}>
-            <Gestures gameDimensions={gameDimensions} handleMove={handleMove} handleClick={handleClick} />
+            <Gestures gameDimensions={gameDimensions} handleMove={handleMove} handleDoubleClick={handleDoubleClick} />
 
             <UI gameDimensions={gameDimensions} handleRotateBase={handleRotateBase} />
         </div>
