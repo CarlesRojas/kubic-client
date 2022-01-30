@@ -463,10 +463,31 @@ export default function Game() {
     const handleMove = (direction) => {
         if (directFalling.current) return;
 
-        moveTetro({
-            x: direction === "topLeft" ? -1 : direction === "bottomRight" ? 1 : 0,
-            z: direction === "topRight" ? -1 : direction === "bottomLeft" ? 1 : 0,
-        });
+        var currAngle = THREE.Math.radToDeg(levelTargetAngle.current) % 360;
+        currAngle = currAngle < 0 ? 360 + currAngle : currAngle;
+        currAngle = Math.round(currAngle);
+
+        if (currAngle === 0) {
+            moveTetro({
+                x: direction === "topLeft" ? -1 : direction === "bottomRight" ? 1 : 0,
+                z: direction === "topRight" ? -1 : direction === "bottomLeft" ? 1 : 0,
+            });
+        } else if (currAngle === 90) {
+            moveTetro({
+                x: direction === "bottomLeft" ? -1 : direction === "topRight" ? 1 : 0,
+                z: direction === "topLeft" ? -1 : direction === "bottomRight" ? 1 : 0,
+            });
+        } else if (currAngle === 180) {
+            moveTetro({
+                x: direction === "bottomRight" ? -1 : direction === "topLeft" ? 1 : 0,
+                z: direction === "bottomLeft" ? -1 : direction === "topRight" ? 1 : 0,
+            });
+        } else if (currAngle === 270) {
+            moveTetro({
+                x: direction === "topRight" ? -1 : direction === "bottomLeft" ? 1 : 0,
+                z: direction === "bottomRight" ? -1 : direction === "topLeft" ? 1 : 0,
+            });
+        }
     };
 
     const handleClick = () => {
