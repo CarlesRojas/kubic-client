@@ -1,9 +1,28 @@
+import { useContext } from "react";
 import SVG from "react-inlinesvg";
+import useGlobalState from "../hooks/useGlobalState";
+
+import { Events } from "../contexts/Events";
 
 import LeftIcon from "../resources/icons/left.svg";
 import RightIcon from "../resources/icons/right.svg";
 
-export default function UI({ gameDimensions, handleRotateBase }) {
+export default function UI() {
+    const { emit } = useContext(Events);
+    const [gameDimensions] = useGlobalState("gameDimensions");
+
+    // #################################################
+    //   HANDLERS
+    // #################################################
+
+    const handleRotateBase = (rotateRight) => {
+        emit("rotateLevel", rotateRight);
+    };
+
+    // #################################################
+    //   RENDER
+    // #################################################
+
     return (
         <div className="UI">
             <div

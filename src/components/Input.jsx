@@ -1,8 +1,14 @@
-import { useRef } from "react";
+import { useRef, useContext } from "react";
 import { useDrag } from "@use-gesture/react";
 import useDoubleClick from "../hooks/useDoubleClick";
+import useGlobalState from "../hooks/useGlobalState";
 
-export default function Gestures({ gameDimensions, handleMove, handleDoubleClick, onRotateX, onRotateY, onRotateZk }) {
+import { Events } from "../contexts/Events";
+
+export default function Input() {
+    const { emit } = useContext(Events);
+    const [gameDimensions] = useGlobalState("gameDimensions");
+
     // #################################################
     //   GESTURES
     // #################################################
@@ -28,10 +34,10 @@ export default function Gestures({ gameDimensions, handleMove, handleDoubleClick
                     disp > moveThreshold
                 ) {
                     moveInitial.current = { x: mx, y: my };
-                    if (movX > 0 && movY > 0) handleMove("bottomRight");
-                    else if (movX < 0 && movY > 0) handleMove("bottomLeft");
-                    else if (movX > 0 && movY < 0) handleMove("topRight");
-                    else if (movX < 0 && movY < 0) handleMove("topLeft");
+                    // if (movX > 0 && movY > 0) handleMove("bottomRight");
+                    // else if (movX < 0 && movY > 0) handleMove("bottomLeft");
+                    // else if (movX > 0 && movY < 0) handleMove("topRight");
+                    // else if (movX < 0 && movY < 0) handleMove("topLeft");
                 }
             }
         },
@@ -43,14 +49,14 @@ export default function Gestures({ gameDimensions, handleMove, handleDoubleClick
     // #################################################
 
     const doubleClickRef = useRef();
-    useDoubleClick({ onDoubleClick: handleDoubleClick, ref: doubleClickRef });
+    useDoubleClick({ onDoubleClick: () => null /*handleDoubleClick*/, ref: doubleClickRef });
 
     // #################################################
     //   RENDER
     // #################################################
 
     return (
-        <div className="Gestures">
+        <div className="Input">
             <div className="moveTetro" {...moveGestureBind()} ref={doubleClickRef}></div>
         </div>
     );

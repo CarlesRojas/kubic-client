@@ -1,8 +1,19 @@
 const constants = {
+    // GRID
+
     gridX: 4,
     gridZ: 4,
     gridY: 12,
-    cubeSize: 10,
+    cellSize: 10,
+
+    // FLOOR
+    floor: {
+        id: "floor",
+        color: "#666666",
+    },
+
+    // TETROMINOS
+
     tetrominos: [
         {
             id: "I",

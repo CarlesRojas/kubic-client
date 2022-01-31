@@ -32,10 +32,10 @@
 }
 
 // #######################################
-//      GESTURES
+//      INPUT
 // #######################################
 
-.Gestures {
+.Input {
     position: absolute;
     top: 0;
     bottom: 0;
@@ -81,7 +81,7 @@
 
         .rotateBaseIcons {
             position: relative;
-            bottom: 11.2%;
+            bottom: 11.7%;
             left: 0;
             right: 0;
             position: absolute;
@@ -90,7 +90,7 @@
             justify-content: space-between;
 
             .icon {
-                color: rgba(0, 0, 0, 0.5);
+                color: rgba(0, 0, 0, 0.3);
                 height: 100%;
                 min-height: 100%;
                 max-height: 100%;
