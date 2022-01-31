@@ -228,10 +228,10 @@ export default class GameController {
     #createLights() {
         if (!this.scene) return;
 
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
         this.scene.add(ambientLight);
 
-        const dirLight = new THREE.DirectionalLight(0xffffff, 0.5);
+        const dirLight = new THREE.DirectionalLight(0xffffff, 0.7);
         dirLight.position.set(200, 300, 100);
         this.scene.add(dirLight);
     }
@@ -265,6 +265,7 @@ export default class GameController {
 
         this.global.state.set("gameDimensions", { width: gameWidth, height: gameHeight });
         this.renderer.setSize(gameWidth, gameHeight);
+        this.renderer.setPixelRatio(window.devicePixelRatio);
 
         const prevCanvas = this.container.current.getElementsByTagName("canvas");
         if (prevCanvas.length) prevCanvas[0].parentNode.removeChild(prevCanvas[0]);
