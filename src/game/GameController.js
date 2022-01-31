@@ -90,11 +90,8 @@ export default class GameController {
 
         const deltaTime = this.#getDeltaTime(timestamp);
 
-        // updateDifficulty();
-        // updateSpeed();
-        // keepFalling(timestamp);
-        // animateBlocks(deltaTime);
-        this.#rotateLevel(deltaTime);
+        if (this.tetromino) this.tetromino.update(timestamp, deltaTime);
+        this.#animateLevelRotation(deltaTime);
 
         this.#render();
     }
@@ -204,7 +201,7 @@ export default class GameController {
         else this.global.levelAngle -= 90;
     }
 
-    #rotateLevel(deltaTime) {
+    #animateLevelRotation(deltaTime) {
         if (!this.global.level) return;
 
         const animationDurationMs = 250;

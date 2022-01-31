@@ -1,6 +1,7 @@
 import { useContext } from "react";
 import SVG from "react-inlinesvg";
 import useGlobalState from "../hooks/useGlobalState";
+import useThrottle from "../hooks/useThrottle";
 
 import { Events } from "../contexts/Events";
 
@@ -15,9 +16,9 @@ export default function UI() {
     //   HANDLERS
     // #################################################
 
-    const handleRotateBase = (rotateRight) => {
+    const handleRotateBase = useThrottle((rotateRight) => {
         emit("rotateLevel", rotateRight);
-    };
+    }, 250);
 
     // #################################################
     //   RENDER

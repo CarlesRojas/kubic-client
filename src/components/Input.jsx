@@ -2,12 +2,21 @@ import { useRef, useContext } from "react";
 import { useDrag } from "@use-gesture/react";
 import useDoubleClick from "../hooks/useDoubleClick";
 import useGlobalState from "../hooks/useGlobalState";
+import { xyToIso } from "../game/Utils";
 
 import { Events } from "../contexts/Events";
 
 export default function Input() {
     const { emit } = useContext(Events);
     const [gameDimensions] = useGlobalState("gameDimensions");
+
+    // #################################################
+    //   HANDLERS
+    // #################################################
+
+    const handleDoubleClick = () => {
+        emit("autoFall");
+    };
 
     // #################################################
     //   GESTURES
@@ -20,24 +29,22 @@ export default function Input() {
         ({ event, first, down, movement: [mx, my] }) => {
             event.stopPropagation();
 
-            if (first) moveInitial.current = { x: 0, y: 0 };
+            if (first) moveInitial.current = { x: 0, z: 0 };
 
             if (down) {
-                const movX = mx - moveInitial.current.x;
-                const movY = my - moveInitial.current.y;
+                const { x, z } = xyToIso({ x: mx, y: my });
 
-                const disp = Math.sqrt(movX * movX + movY * movY);
+                const movX = x - moveInitial.current.x;
+                const movZ = z - moveInitial.current.z;
 
-                if (
-                    Math.abs(movX) > moveThreshold * 0.3 &&
-                    Math.abs(movY) > moveThreshold * 0.3 &&
-                    disp > moveThreshold
-                ) {
-                    moveInitial.current = { x: mx, y: my };
-                    // if (movX > 0 && movY > 0) handleMove("bottomRight");
-                    // else if (movX < 0 && movY > 0) handleMove("bottomLeft");
-                    // else if (movX > 0 && movY < 0) handleMove("topRight");
-                    // else if (movX < 0 && movY < 0) handleMove("topLeft");
+                if (Math.abs(movX) > moveThreshold) {
+                    moveInitial.current = { ...moveInitial.current, x };
+                    emit("moveTetromino", movX > 0 ? "bottomRight" : "topLeft");
+                }
+
+                if (Math.abs(movZ) > moveThreshold) {
+                    moveInitial.current = { ...moveInitial.current, z };
+                    emit("moveTetromino", movZ > 0 ? "bottomLeft" : "topRight");
                 }
             }
         },
@@ -49,7 +56,7 @@ export default function Input() {
     // #################################################
 
     const doubleClickRef = useRef();
-    useDoubleClick({ onDoubleClick: () => null /*handleDoubleClick*/, ref: doubleClickRef });
+    useDoubleClick({ onDoubleClick: handleDoubleClick, ref: doubleClickRef });
 
     // #################################################
     //   RENDER
