@@ -11,14 +11,6 @@ export default function Input() {
     const [gameDimensions] = useGlobalState("gameDimensions");
 
     // #################################################
-    //   HANDLERS
-    // #################################################
-
-    const handleDoubleClick = () => {
-        emit("autoFall");
-    };
-
-    // #################################################
     //   GESTURES
     // #################################################
 
@@ -26,12 +18,24 @@ export default function Input() {
     const moveThreshold = gameDimensions.width * 0.1;
 
     const moveGestureBind = useDrag(
-        ({ event, first, down, movement: [mx, my] }) => {
+        ({
+            event,
+            first,
+            down,
+            touches,
+            movement: [mx, my],
+            velocity: [vx, vy],
+            direction: [dx, dy],
+            cancel,
+            canceled,
+        }) => {
             event.stopPropagation();
+
+            if (canceled) return;
 
             if (first) moveInitial.current = { x: 0, z: 0 };
 
-            if (down) {
+            if (down && touches <= 1) {
                 const { x, z } = xyToIso({ x: mx, y: my });
 
                 const movX = x - moveInitial.current.x;
@@ -47,16 +51,24 @@ export default function Input() {
                     emit("moveTetromino", movZ > 0 ? "bottomLeft" : "topRight");
                 }
             }
+
+            // Two fingers gestures
+            if (touches > 1) {
+                // Autofall -> Vertical 2 fingers gesture
+                if (my > moveThreshold * 4 || (dy > 0 && vy > 1)) {
+                    console.log("Fall fast");
+                    cancel();
+                }
+
+                // Rotate level -> Horizontal 2 fingers gesture
+                if (mx > moveThreshold * 4 || vx > 1) {
+                    console.log(`Rotate. Right: ${dx > 0}`);
+                    cancel();
+                }
+            }
         },
         { filterTaps: true }
     );
-
-    // #################################################
-    //   DOUBLE CLICK
-    // #################################################
-
-    const doubleClickRef = useRef();
-    useDoubleClick({ onDoubleClick: handleDoubleClick, ref: doubleClickRef });
 
     // #################################################
     //   RENDER
@@ -64,7 +76,7 @@ export default function Input() {
 
     return (
         <div className="Input">
-            <div className="moveTetro" {...moveGestureBind()} ref={doubleClickRef}></div>
+            <div className="moveTetro" {...moveGestureBind()}></div>
         </div>
     );
 }
