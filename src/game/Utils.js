@@ -11,6 +11,16 @@ export const gridPosToWorldPos = ({ x, y, z }) => {
     return { worldX, worldY, worldZ };
 };
 
+export const worldToGridPos = ({ worldX, worldY, worldZ }) => {
+    const { cellSize, gridX, gridZ } = constants;
+
+    const x = Math.round((worldX + (gridX / 2) * cellSize + cellSize / 2) / cellSize - 1);
+    const y = Math.round((worldY - cellSize / 2) / cellSize);
+    const z = Math.round((worldZ + (gridZ / 2) * cellSize + cellSize / 2) / cellSize - 1);
+
+    return { x, y, z };
+};
+
 export const centroid = (points) => {
     if (!points || !points.length) return;
 

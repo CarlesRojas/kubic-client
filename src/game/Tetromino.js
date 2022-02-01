@@ -1,6 +1,12 @@
 import * as THREE from "three";
 import constants from "../constants";
-import { centroid, gridPosToWorldPos, worldToScreen } from "./Utils";
+import { centroid, gridPosToWorldPos, worldToGridPos, worldToScreen } from "./Utils";
+
+const ROTATIONS = {
+    NONE: "none",
+    BASE_RIGHT: "baseRight",
+    BASE_LEFT: "baseLeft",
+};
 
 export default class Tetromino {
     constructor(global) {
@@ -8,6 +14,7 @@ export default class Tetromino {
 
         this.cubes = [];
         this.cubePositions = [];
+        this.cubeDisplacements = [];
 
         this.speedLimits = { min: 200, max: 2000, step: 100 };
         this.speed = this.speedLimits.max;
@@ -16,6 +23,10 @@ export default class Tetromino {
         this.isAutoFalling = false;
         this.animating = true;
 
+        this.rotating = false;
+        this.currentRotation = ROTATIONS.NONE;
+        this.cubeRotations = [0, 0, 0, 0];
+
         this.isGameLost = false;
 
         // CREATE FIRST TETRO
@@ -23,7 +34,7 @@ export default class Tetromino {
         this.#spawnNextTetromino();
 
         // SUB TO EVENTS
-        this.global.events.sub("rowCleared", this.#updateDifficulty.bind(this)); // ROJAS
+        this.global.events.sub("rowCleared", this.#updateDifficulty.bind(this)); // ROJAS not being called
         this.global.events.sub("autoFall", this.#autoFall.bind(this));
         this.global.events.sub("moveTetromino", this.#moveTetromino.bind(this));
         this.global.events.sub("rotateBaseTetromino", this.#rotateBaseTetromino.bind(this));
@@ -32,8 +43,11 @@ export default class Tetromino {
     }
 
     update(timestamp, deltaTime) {
-        this.#keepFalling(timestamp);
-        this.#animateCubes(timestamp, deltaTime);
+        if (this.rotating) this.#animateCubesRotation(timestamp, deltaTime);
+        else {
+            this.#keepFalling(timestamp);
+            this.#animateCubes(timestamp, deltaTime);
+        }
     }
 
     // #################################################
@@ -51,6 +65,7 @@ export default class Tetromino {
         const { color, positions } = tetrominos[this.nestTetromino];
         this.cubes = [];
         this.cubePositions = [];
+        this.cubeDisplacements = positions;
         this.isAutoFalling = false;
 
         if (this.isGameLost) return;
@@ -168,7 +183,9 @@ export default class Tetromino {
     // #################################################
 
     #rotateBaseTetromino(rotateRight) {
-        console.log(`Rotate base ${rotateRight ? "right" : "left"}`);
+        this.rotating = true;
+        this.cubeRotations = [0, 0, 0, 0];
+        this.currentRotation = rotateRight ? ROTATIONS.BASE_RIGHT : ROTATIONS.BASE_LEFT;
     }
 
     #rotateLeftTetromino(rotateDown) {
@@ -177,6 +194,68 @@ export default class Tetromino {
 
     #rotateRightTetromino(rotateDown) {
         console.log(`Rotate right ${rotateDown ? "down" : "up"}`);
+    }
+
+    #animateCubesRotation(timestamp, deltaTime) {
+        if (this.currentRotation === ROTATIONS.BASE_RIGHT && !this.#areRotationsComlete())
+            this.#rotate(deltaTime, "y", true);
+        else if (this.currentRotation === ROTATIONS.BASE_LEFT && !this.#areRotationsComlete())
+            this.#rotate(deltaTime, "y", false);
+
+        if (this.currentRotation !== ROTATIONS.NONE && this.#areRotationsComlete()) this.#onRotationComlete();
+    }
+
+    #rotate(deltaTime, axis, positive) {
+        const { cellSize } = constants;
+
+        const animationDurationMs = 50;
+        const step = (90 / animationDurationMs) * deltaTime;
+
+        for (let i = 0; i < this.cubes.length; i++) {
+            const cube = this.cubes[i];
+            const displacement = this.cubeDisplacements[i];
+
+            const anchorPoint = new THREE.Vector3(
+                cube.position.x - displacement[0] * cellSize,
+                cube.position.y - displacement[1] * cellSize,
+                cube.position.z - displacement[2] * cellSize
+            );
+
+            let moveDir = new THREE.Vector3(
+                anchorPoint.x - cube.position.x,
+                anchorPoint.y - cube.position.y,
+                anchorPoint.z - cube.position.z
+            );
+            moveDir.normalize();
+            let moveDist = cube.position.distanceTo(anchorPoint);
+            cube.translateOnAxis(moveDir, moveDist);
+
+            const nextRotationAngle = this.cubeRotations[i] + step;
+            const angleToRotate = step + (nextRotationAngle > 90 ? 90 - nextRotationAngle : 0);
+            this.cubeRotations[i] = Math.min(90, nextRotationAngle);
+
+            if (axis === "y") {
+                cube.rotateY(THREE.Math.degToRad(angleToRotate * (positive ? 1 : -1)));
+            }
+
+            moveDir.multiplyScalar(-1);
+            cube.translateOnAxis(moveDir, moveDist);
+        }
+    }
+
+    #areRotationsComlete() {
+        for (let i = 0; i < this.cubeRotations.length; i++) if (this.cubeRotations[i] < 90) return false;
+        return true;
+    }
+
+    #onRotationComlete() {
+        this.rotating = false;
+        this.currentRotation = ROTATIONS.NONE;
+        this.cubeRotations = [0, 0, 0, 0];
+
+        this.cubePositions = this.cubes.map((cube) =>
+            worldToGridPos({ worldX: cube.position.x, worldY: cube.position.y, worldZ: cube.position.z })
+        );
     }
 
     // #################################################
