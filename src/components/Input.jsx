@@ -1,6 +1,5 @@
 import { useRef, useContext } from "react";
 import { useDrag } from "@use-gesture/react";
-import useDoubleClick from "../hooks/useDoubleClick";
 import useGlobalState from "../hooks/useGlobalState";
 import { xyToIso } from "../game/Utils";
 
@@ -56,13 +55,13 @@ export default function Input() {
             if (touches > 1) {
                 // Autofall -> Vertical 2 fingers gesture
                 if (my > moveThreshold * 4 || (dy > 0 && vy > 1)) {
-                    console.log("Fall fast");
+                    emit("autoFall");
                     cancel();
                 }
 
                 // Rotate level -> Horizontal 2 fingers gesture
                 if (mx > moveThreshold * 4 || vx > 1) {
-                    console.log(`Rotate. Right: ${dx > 0}`);
+                    emit("rotateLevel", dx > 0);
                     cancel();
                 }
             }
