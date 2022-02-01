@@ -1,4 +1,4 @@
-import { useRef, useContext } from "react";
+import { useRef, useContext, useEffect, useState } from "react";
 import { useDrag } from "@use-gesture/react";
 import useGlobalState from "../hooks/useGlobalState";
 import { xyToIso } from "../game/Utils";
@@ -6,15 +6,20 @@ import { xyToIso } from "../game/Utils";
 import { Events } from "../contexts/Events";
 
 export default function Input() {
-    const { emit } = useContext(Events);
-    const [gameDimensions] = useGlobalState("gameDimensions");
+    const { emit, sub, unsub } = useContext(Events);
 
     // #################################################
-    //   GESTURES
+    //   GAME DIMENSIONS
+    // #################################################
+
+    const [gameDimensions] = useGlobalState("gameDimensions");
+    const gestureThreshold = gameDimensions.width * 0.1;
+
+    // #################################################
+    //   MOVE GESTURE
     // #################################################
 
     const moveInitial = useRef({ x: 0, y: 0 });
-    const moveThreshold = gameDimensions.width * 0.1;
 
     const moveGestureBind = useDrag(
         ({
@@ -40,12 +45,12 @@ export default function Input() {
                 const movX = x - moveInitial.current.x;
                 const movZ = z - moveInitial.current.z;
 
-                if (Math.abs(movX) > moveThreshold) {
+                if (Math.abs(movX) > gestureThreshold) {
                     moveInitial.current = { ...moveInitial.current, x };
                     emit("moveTetromino", movX > 0 ? "bottomRight" : "topLeft");
                 }
 
-                if (Math.abs(movZ) > moveThreshold) {
+                if (Math.abs(movZ) > gestureThreshold) {
                     moveInitial.current = { ...moveInitial.current, z };
                     emit("moveTetromino", movZ > 0 ? "bottomLeft" : "topRight");
                 }
@@ -54,13 +59,13 @@ export default function Input() {
             // Two fingers gestures
             if (touches > 1) {
                 // Autofall -> Vertical 2 fingers gesture
-                if (my > moveThreshold * 4 || (dy > 0 && vy > 1)) {
+                if (my > gestureThreshold * 4 || (dy > 0 && vy > 1)) {
                     emit("autoFall");
                     cancel();
                 }
 
                 // Rotate level -> Horizontal 2 fingers gesture
-                if (mx > moveThreshold * 4 || vx > 1) {
+                if (mx > gestureThreshold * 4 || vx > 1) {
                     emit("rotateLevel", dx > 0);
                     cancel();
                 }
@@ -70,12 +75,77 @@ export default function Input() {
     );
 
     // #################################################
+    //   ROTATE GESTURES
+    // #################################################
+
+    const rotateTetroRef = useRef();
+
+    const rotateGestureBind = useDrag(
+        ({ event, touches, xy, movement: [mx, my], velocity: [vx, vy], direction: [dx, dy], cancel, canceled }) => {
+            event.stopPropagation();
+
+            if (canceled || touches > 1) return;
+
+            // Rotate horizontal
+            if (mx > gestureThreshold * 4 || vx > 1) {
+                emit("rotateBaseTetromino", dx > 0);
+                cancel();
+            }
+
+            // rotateTetroRef
+            // console.log(xy, my, vy);
+
+            // Rotate vertical
+            if (my > gestureThreshold * 4 || vy > 1) {
+                const box = rotateTetroRef.current.getBoundingClientRect();
+                const pointX = xy[0] - box.x;
+
+                // Left side
+                if (pointX <= box.width / 2) emit("rotateLeftTetromino", dy > 0);
+                // Right side
+                else emit("rotateRightTetromino", dy > 0);
+
+                cancel();
+            }
+        },
+        { filterTaps: true }
+    );
+
+    // #################################################
+    //   UPDATE TETROMINO POSITION
+    // #################################################
+
+    const [tetrominoCenter, setTetrominoCenter] = useState({ x: 0, y: 0 });
+
+    const handleUpdateTetroPosition = (center) => {
+        setTetrominoCenter(center);
+    };
+
+    useEffect(() => {
+        sub("updateTetroPosition", handleUpdateTetroPosition);
+        return () => {
+            unsub("updateTetroPosition", handleUpdateTetroPosition);
+        };
+    }, [sub, unsub]);
+
+    // #################################################
     //   RENDER
     // #################################################
 
     return (
         <div className="Input">
             <div className="moveTetro" {...moveGestureBind()}></div>
+            <div
+                className="rotateTetro"
+                style={{
+                    height: `${gameDimensions.width * 0.6}px`,
+                    width: `${gameDimensions.width * 0.6}px`,
+                    left: `${tetrominoCenter.x}px`,
+                    top: `${tetrominoCenter.y}px`,
+                }}
+                {...rotateGestureBind()}
+                ref={rotateTetroRef}
+            ></div>
         </div>
     );
 }

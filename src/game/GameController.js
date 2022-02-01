@@ -12,11 +12,12 @@ export default class GameController {
             grid: [[[]]],
             levelAngle: 0,
             paused: false,
+            camera: null,
         };
 
         this.scene = null;
-        this.camera = null;
         this.renderer = null;
+
         this.container = null;
         this.lastTimestamp = 0;
         this.tetromino = null;
@@ -97,9 +98,9 @@ export default class GameController {
     }
 
     #render() {
-        if (!this.renderer || !this.scene || !this.camera) return;
+        if (!this.renderer || !this.scene || !this.global.camera) return;
 
-        this.renderer.render(this.scene, this.camera);
+        this.renderer.render(this.scene, this.global.camera);
     }
 
     #getDeltaTime(timestamp) {
@@ -241,11 +242,11 @@ export default class GameController {
         const width = 75;
         const height = width / aspectRatio;
 
-        this.camera = new THREE.OrthographicCamera(width / -2, width / 2, height / 2, height / -2, 10, 1000);
+        this.global.camera = new THREE.OrthographicCamera(width / -2, width / 2, height / 2, height / -2, 10, 1000);
 
         const verticalDisplacement = 60;
-        this.camera.position.set(100, 75 + verticalDisplacement, 100);
-        this.camera.lookAt(0, verticalDisplacement, 0);
+        this.global.camera.position.set(100, 75 + verticalDisplacement, 100);
+        this.global.camera.lookAt(0, verticalDisplacement, 0);
     }
 
     #createRenderer({ width, height }) {

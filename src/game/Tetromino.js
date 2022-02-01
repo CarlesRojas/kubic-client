@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import constants from "../constants";
-import { gridPosToWorldPos } from "./Utils";
+import { centroid, gridPosToWorldPos, worldToScreen } from "./Utils";
 
 export default class Tetromino {
     constructor(global) {
@@ -14,7 +14,7 @@ export default class Tetromino {
 
         this.timestampOfLastFall = 0;
         this.isAutoFalling = false;
-        this.animating = false;
+        this.animating = true;
 
         this.isGameLost = false;
 
@@ -26,6 +26,9 @@ export default class Tetromino {
         this.global.events.sub("rowCleared", this.#updateDifficulty.bind(this)); // ROJAS
         this.global.events.sub("autoFall", this.#autoFall.bind(this));
         this.global.events.sub("moveTetromino", this.#moveTetromino.bind(this));
+        this.global.events.sub("rotateBaseTetromino", this.#rotateBaseTetromino.bind(this));
+        this.global.events.sub("rotateLeftTetromino", this.#rotateLeftTetromino.bind(this));
+        this.global.events.sub("rotateRightTetromino", this.#rotateRightTetromino.bind(this));
     }
 
     update(timestamp, deltaTime) {
@@ -161,6 +164,22 @@ export default class Tetromino {
     }
 
     // #################################################
+    //   ROTATE
+    // #################################################
+
+    #rotateBaseTetromino(rotateRight) {
+        console.log(`Rotate base ${rotateRight ? "right" : "left"}`);
+    }
+
+    #rotateLeftTetromino(rotateDown) {
+        console.log(`Rotate left ${rotateDown ? "down" : "up"}`);
+    }
+
+    #rotateRightTetromino(rotateDown) {
+        console.log(`Rotate right ${rotateDown ? "down" : "up"}`);
+    }
+
+    // #################################################
     //   FALL
     // #################################################
 
@@ -254,6 +273,8 @@ export default class Tetromino {
                 animating = true;
         }
 
+        this.#setTetrominoCenter();
+
         if (this.animating !== animating) {
             this.animating = animating;
             this.#animationChangeState(timestamp);
@@ -261,9 +282,16 @@ export default class Tetromino {
     }
 
     #animationChangeState(timestamp) {
-        if (!this.animating && this.isAutoFalling) {
-            this.#spawnNextTetromino(timestamp);
-        }
+        if (!this.animating && this.isAutoFalling) this.#spawnNextTetromino(timestamp);
+    }
+
+    #setTetrominoCenter() {
+        const centers = this.cubes.map((cube) => {
+            const { x, y } = worldToScreen(cube, this.global.camera);
+            return [x, y];
+        });
+        const center = centroid(centers);
+        this.global.events.emit("updateTetroPosition", { x: center[0], y: center[1] });
     }
 
     // #################################################

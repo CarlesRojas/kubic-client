@@ -1,4 +1,5 @@
 import constants from "../constants";
+import * as THREE from "three";
 
 export const gridPosToWorldPos = ({ x, y, z }) => {
     const { cellSize, gridX, gridZ } = constants;
@@ -8,6 +9,41 @@ export const gridPosToWorldPos = ({ x, y, z }) => {
     const worldZ = z * cellSize - (gridZ / 2) * cellSize + cellSize / 2;
 
     return { worldX, worldY, worldZ };
+};
+
+export const centroid = (points) => {
+    if (!points || !points.length) return;
+
+    let dimensions = points[0].length;
+
+    let accumulation = points.reduce((acc, point) => {
+        point.forEach((dimension, i) => {
+            acc[i] += dimension;
+        });
+
+        return acc;
+    }, Array(dimensions).fill(0));
+
+    return accumulation.map((dimension) => dimension / points.length);
+};
+
+export const worldToScreen = (obj, camera) => {
+    var vector = new THREE.Vector3();
+
+    var widthHalf = 0.5 * window.innerWidth;
+    var heightHalf = 0.5 * window.innerHeight;
+
+    obj.updateMatrixWorld();
+    vector.setFromMatrixPosition(obj.matrixWorld);
+    vector.project(camera);
+
+    vector.x = vector.x * widthHalf + widthHalf;
+    vector.y = -(vector.y * heightHalf) + heightHalf;
+
+    return {
+        x: vector.x,
+        y: vector.y,
+    };
 };
 
 function multiplyMatrices(m1, m2) {

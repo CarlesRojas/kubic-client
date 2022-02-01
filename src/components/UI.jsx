@@ -7,6 +7,7 @@ import { Events } from "../contexts/Events";
 
 import LeftIcon from "../resources/icons/left.svg";
 import RightIcon from "../resources/icons/right.svg";
+import AutoFallIcon from "../resources/icons/autofall.svg";
 
 export default function UI() {
     const { emit } = useContext(Events);
@@ -20,6 +21,10 @@ export default function UI() {
         emit("rotateLevel", rotateRight);
     }, 250);
 
+    const handleAutoFall = useThrottle(() => {
+        emit("autoFall");
+    }, 250);
+
     // #################################################
     //   RENDER
     // #################################################
@@ -30,9 +35,13 @@ export default function UI() {
                 className="gameContainer"
                 style={{ height: `${gameDimensions.height}px`, width: `${gameDimensions.width}px` }}
             >
-                <div className="rotateBaseIcons" style={{ height: `${gameDimensions.width * 0.15}px` }}>
+                <div className="rotateBaseIcons" style={{ height: `${gameDimensions.width * 0.13}px` }}>
                     <SVG className="icon" src={LeftIcon} onClick={() => handleRotateBase(false)}></SVG>
                     <SVG className="icon" src={RightIcon} onClick={() => handleRotateBase(true)}></SVG>
+                </div>
+
+                <div className="autoFallIcons" style={{ height: `${gameDimensions.width * 0.13}px` }}>
+                    <SVG className="icon" src={AutoFallIcon} onClick={handleAutoFall}></SVG>
                 </div>
             </div>
         </div>
