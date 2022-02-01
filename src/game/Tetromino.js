@@ -291,7 +291,9 @@ export default class Tetromino {
             return [x, y];
         });
         const center = centroid(centers);
-        this.global.events.emit("updateTetroPosition", { x: center[0], y: center[1] });
+
+        if (center && center.length > 1) this.global.events.emit("updateTetroPosition", { x: center[0], y: center[1] });
+        else this.global.events.emit("updateTetroPosition", { x: -1000000, y: 0 });
     }
 
     // #################################################
