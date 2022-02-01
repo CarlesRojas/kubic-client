@@ -16,76 +16,7 @@ const constants = {
 
     tetrominos: [
         {
-            id: "I",
-            positions: [
-                [0, 0, 0],
-                [0, 0, -1],
-                [0, 0, 1],
-                [0, 0, 2],
-            ],
-            color: "#4CD7FF",
-        },
-        {
-            id: "J",
-            positions: [
-                [0, 0, 0],
-                [0, 1, 0],
-                [1, 0, 0],
-                [1, 0, 1],
-            ],
-            color: "#FF8E31",
-        },
-        {
-            id: "L",
-            positions: [
-                [0, 0, -1],
-                [0, 1, -1],
-                [0, 0, 0],
-                [0, 0, 1],
-            ],
-            color: "#3559FF",
-        },
-        {
-            id: "M",
-            positions: [
-                [0, 0, 0],
-                [1, 0, 0],
-                [0, 1, 0],
-                [0, 0, 1],
-            ],
-            color: "#35A126",
-        },
-        {
-            id: "O",
-            positions: [
-                [0, 0, 0],
-                [0, 0, 1],
-                [0, 1, 0],
-                [0, 1, 1],
-            ],
-            color: "#FFF454",
-        },
-        {
-            id: "S",
-            positions: [
-                [0, 0, 0],
-                [0, 0, -1],
-                [0, 1, 0],
-                [0, 1, 1],
-            ],
-            color: "#4EFB27",
-        },
-        {
-            id: "T",
-            positions: [
-                [0, 0, 0],
-                [0, 1, 0],
-                [0, 0, 1],
-                [0, 0, -1],
-            ],
-            color: "#AB62FF",
-        },
-        {
+            num: 0,
             id: "Z",
             positions: [
                 [0, 0, 0],
@@ -93,7 +24,92 @@ const constants = {
                 [1, 0, 0],
                 [1, 1, 0],
             ],
-            color: "#FF4C4C",
+            colorPastel: "#ff7070",
+            color: "#ff5454",
+        },
+        {
+            num: 1,
+            id: "J",
+            positions: [
+                [0, 0, 0],
+                [0, 1, 0],
+                [1, 0, 0],
+                [1, 0, 1],
+            ],
+            colorPastel: "#ffb070",
+            color: "#ff9b54",
+        },
+        {
+            num: 2,
+            id: "O",
+            positions: [
+                [0, 0, 0],
+                [0, 0, 1],
+                [0, 1, 0],
+                [0, 1, 1],
+            ],
+            colorPastel: "#fff170",
+            color: "#ffff54",
+        },
+        {
+            num: 3,
+            id: "S",
+            positions: [
+                [0, 0, 0],
+                [0, 0, -1],
+                [0, 1, 0],
+                [0, 1, 1],
+            ],
+            colorPastel: "#70ff70",
+            color: "#79ff54",
+        },
+        {
+            num: 4,
+            id: "I",
+            positions: [
+                [0, 0, 0],
+                [0, 0, -1],
+                [0, 0, 1],
+                [0, 0, 2],
+            ],
+            colorPastel: "#70e5ff",
+            color: "#54e8ff",
+        },
+        {
+            num: 5,
+            id: "L",
+            positions: [
+                [0, 0, -1],
+                [0, 1, -1],
+                [0, 0, 0],
+                [0, 0, 1],
+            ],
+            colorPastel: "#707eff",
+            color: "#5f54ff",
+        },
+        {
+            num: 6,
+            id: "T",
+            positions: [
+                [0, 0, 0],
+                [0, 1, 0],
+                [0, 0, 1],
+                [0, 0, -1],
+            ],
+            colorPastel: "#b370ff",
+            color: "#a154ff",
+        },
+        {
+            num: -1,
+            id: "M",
+            positions: [
+                [0, 0, 0],
+                [1, 0, 0],
+                [0, 1, 0],
+                [0, 0, 1],
+            ],
+            colorPastel: "#ff70f5",
+            color: "#ff54ee",
         },
     ],
 };

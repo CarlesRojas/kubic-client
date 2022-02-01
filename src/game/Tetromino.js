@@ -66,7 +66,7 @@ export default class Tetromino {
     #spawnNextTetromino(timestamp = 0) {
         const { tetrominos, gridX, gridY, gridZ, cellSize } = constants;
 
-        const { color, positions } = tetrominos[this.nestTetromino];
+        const { colorPastel, positions } = tetrominos[this.nestTetromino];
         this.cubes = [];
         this.cubePositions = [];
         this.cubeDisplacements = positions;
@@ -77,7 +77,7 @@ export default class Tetromino {
         for (let i = 0; i < positions.length; i++) {
             const cube = new THREE.Mesh(
                 new THREE.BoxBufferGeometry(cellSize * 0.95, cellSize * 0.95, cellSize * 0.95),
-                new THREE.MeshLambertMaterial({ color })
+                new THREE.MeshLambertMaterial({ color: colorPastel })
             );
 
             const initialGridPos = { x: Math.floor(gridX / 2) - 1, y: gridY, z: Math.floor(gridZ / 2) - 1 };
@@ -145,7 +145,7 @@ export default class Tetromino {
         }
 
         if (!this.#isPositionCorrect(newCubePositions)) {
-            // ROJAS PLAY HIT WALL SOUND
+            // ROJAS play hit wall sound
             return;
         }
 
