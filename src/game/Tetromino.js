@@ -48,10 +48,10 @@ export default class Tetromino {
 
     update(timestamp, deltaTime) {
         if (this.rotating) this.#animateCubesRotation(deltaTime);
-        else {
-            this.#keepFalling(timestamp);
-            this.#animateCubes(timestamp, deltaTime);
-        }
+        else this.#keepFalling(timestamp);
+
+        this.#animateCubes(timestamp, deltaTime);
+        this.#setTetrominoCenter();
     }
 
     // #################################################
@@ -187,67 +187,150 @@ export default class Tetromino {
     // #################################################
 
     #rotateBaseTetromino(rotateRight) {
-        this.rotating = true;
-        this.currentRotation = rotateRight ? ROTATIONS.BASE_RIGHT : ROTATIONS.BASE_LEFT;
-        this.cubeRotations = [0, 0, 0, 0];
+        if (this.isAutoFalling) return;
+
+        if (this.#calculateRotationDisplacement(rotateRight ? ROTATIONS.BASE_RIGHT : ROTATIONS.BASE_LEFT)) {
+            this.rotating = true;
+            this.currentRotation = rotateRight ? ROTATIONS.BASE_RIGHT : ROTATIONS.BASE_LEFT;
+            this.cubeRotations = [0, 0, 0, 0];
+        } else {
+            // ROJAS Play fail rotation sound
+        }
     }
 
     #rotateLeftTetromino(rotateDown) {
-        this.rotating = true;
-        this.currentRotation = rotateDown ? ROTATIONS.LEFT_DOWN : ROTATIONS.LEFT_UP;
-        this.cubeRotations = [0, 0, 0, 0];
+        if (this.isAutoFalling) return;
+
+        if (this.#calculateRotationDisplacement(rotateDown ? ROTATIONS.LEFT_DOWN : ROTATIONS.LEFT_UP)) {
+            this.rotating = true;
+            this.currentRotation = rotateDown ? ROTATIONS.LEFT_DOWN : ROTATIONS.LEFT_UP;
+            this.cubeRotations = [0, 0, 0, 0];
+        } else {
+            // ROJAS Play fail rotation sound
+        }
     }
 
     #rotateRightTetromino(rotateDown) {
-        this.rotating = true;
-        this.currentRotation = rotateDown ? ROTATIONS.RIGHT_DOWN : ROTATIONS.RIGHT_UP;
-        this.cubeRotations = [0, 0, 0, 0];
+        if (this.isAutoFalling) return;
+
+        if (this.#calculateRotationDisplacement(rotateDown ? ROTATIONS.RIGHT_DOWN : ROTATIONS.RIGHT_UP)) {
+            this.rotating = true;
+            this.currentRotation = rotateDown ? ROTATIONS.RIGHT_DOWN : ROTATIONS.RIGHT_UP;
+            this.cubeRotations = [0, 0, 0, 0];
+        } else {
+            // ROJAS Play fail rotation sound
+        }
+    }
+
+    #calculateRotationDisplacement(rotation) {
+        const axis = this.#getRotationAxis(rotation);
+        const isPositive = this.#isRotationPositive(rotation);
+
+        this.#rotate(1, axis, isPositive, true);
+        const gridPosAfterRotation = this.cubes.map((cube) =>
+            worldToGridPos({ worldX: cube.position.x, worldY: cube.position.y, worldZ: cube.position.z })
+        );
+        this.#rotate(1, axis, !isPositive, true);
+
+        const possibleDisplacements = [
+            { x: 0, y: 0, z: 0 },
+            { x: 1, y: 0, z: 0 },
+            { x: 0, y: 0, z: 1 },
+            { x: -1, y: 0, z: 0 },
+            { x: 0, y: 0, z: -1 },
+            { x: 2, y: 0, z: 0 },
+            { x: 0, y: 0, z: 2 },
+            { x: -2, y: 0, z: 0 },
+            { x: 0, y: 0, z: -2 },
+        ];
+
+        let i = 0;
+        do {
+            const displacement = possibleDisplacements[i];
+
+            const displacedPosition = gridPosAfterRotation.map((pos) => ({
+                x: pos.x + displacement.x,
+                y: pos.y + displacement.y,
+                z: pos.z + displacement.z,
+            }));
+
+            if (this.#isPositionCorrect(displacedPosition)) {
+                this.cubePositions = displacedPosition;
+                return true;
+            }
+
+            ++i;
+        } while (i < possibleDisplacements.length);
+
+        return false;
     }
 
     #animateCubesRotation(deltaTime) {
-        const xAxis = new THREE.Vector3(1, 0, 0);
-        const yAxis = new THREE.Vector3(0, 1, 0);
-        const zAxis = new THREE.Vector3(0, 0, 1);
-
-        var currAngle = this.global.levelAngle % 360;
-        currAngle = currAngle < 0 ? 360 + currAngle : currAngle;
-        currAngle = Math.round(currAngle);
-
         if (!this.#areRotationsComlete()) {
-            if (this.currentRotation === ROTATIONS.BASE_RIGHT) this.#rotate(deltaTime, yAxis, true);
-            else if (this.currentRotation === ROTATIONS.BASE_LEFT) this.#rotate(deltaTime, yAxis, false);
+            const axis = this.#getRotationAxis(this.currentRotation);
+            const isPositive = this.#isRotationPositive(this.currentRotation);
 
-            if (currAngle === 0) {
-                if (this.currentRotation === ROTATIONS.LEFT_DOWN) this.#rotate(deltaTime, xAxis, true);
-                else if (this.currentRotation === ROTATIONS.LEFT_UP) this.#rotate(deltaTime, xAxis, false);
-                else if (this.currentRotation === ROTATIONS.RIGHT_DOWN) this.#rotate(deltaTime, zAxis, false);
-                else if (this.currentRotation === ROTATIONS.RIGHT_UP) this.#rotate(deltaTime, zAxis, true);
-            } else if (currAngle === 90) {
-                if (this.currentRotation === ROTATIONS.LEFT_DOWN) this.#rotate(deltaTime, zAxis, true);
-                else if (this.currentRotation === ROTATIONS.LEFT_UP) this.#rotate(deltaTime, zAxis, false);
-                else if (this.currentRotation === ROTATIONS.RIGHT_DOWN) this.#rotate(deltaTime, xAxis, true);
-                else if (this.currentRotation === ROTATIONS.RIGHT_UP) this.#rotate(deltaTime, xAxis, false);
-            } else if (currAngle === 180) {
-                if (this.currentRotation === ROTATIONS.LEFT_DOWN) this.#rotate(deltaTime, xAxis, false);
-                else if (this.currentRotation === ROTATIONS.LEFT_UP) this.#rotate(deltaTime, xAxis, true);
-                else if (this.currentRotation === ROTATIONS.RIGHT_DOWN) this.#rotate(deltaTime, zAxis, true);
-                else if (this.currentRotation === ROTATIONS.RIGHT_UP) this.#rotate(deltaTime, zAxis, false);
-            } else if (currAngle === 270) {
-                if (this.currentRotation === ROTATIONS.LEFT_DOWN) this.#rotate(deltaTime, zAxis, false);
-                else if (this.currentRotation === ROTATIONS.LEFT_UP) this.#rotate(deltaTime, zAxis, true);
-                else if (this.currentRotation === ROTATIONS.RIGHT_DOWN) this.#rotate(deltaTime, xAxis, false);
-                else if (this.currentRotation === ROTATIONS.RIGHT_UP) this.#rotate(deltaTime, xAxis, true);
-            }
+            this.#rotate(deltaTime, axis, isPositive, false);
         }
 
         if (this.currentRotation !== ROTATIONS.NONE && this.#areRotationsComlete()) this.#onRotationComlete();
     }
 
-    #rotate(deltaTime, axis, positive) {
+    #getRotationAxis(rotationType) {
+        const xAxis = new THREE.Vector3(1, 0, 0);
+        const yAxis = new THREE.Vector3(0, 1, 0);
+        const zAxis = new THREE.Vector3(0, 0, 1);
+
+        if (rotationType === ROTATIONS.BASE_RIGHT) return yAxis;
+        else if (rotationType === ROTATIONS.BASE_LEFT) return yAxis;
+
+        var currAngle = this.global.levelAngle % 360;
+        currAngle = currAngle < 0 ? 360 + currAngle : currAngle;
+        currAngle = Math.round(currAngle);
+
+        if (currAngle === 0) {
+            if (rotationType === ROTATIONS.LEFT_DOWN || rotationType === ROTATIONS.LEFT_UP) return xAxis;
+            else if (rotationType === ROTATIONS.RIGHT_DOWN || rotationType === ROTATIONS.RIGHT_UP) return zAxis;
+        } else if (currAngle === 90) {
+            if (rotationType === ROTATIONS.LEFT_DOWN || rotationType === ROTATIONS.LEFT_UP) return zAxis;
+            else if (rotationType === ROTATIONS.RIGHT_DOWN || rotationType === ROTATIONS.RIGHT_UP) return xAxis;
+        } else if (currAngle === 180) {
+            if (rotationType === ROTATIONS.LEFT_DOWN || rotationType === ROTATIONS.LEFT_UP) return xAxis;
+            else if (rotationType === ROTATIONS.RIGHT_DOWN || rotationType === ROTATIONS.RIGHT_UP) return zAxis;
+        } else if (currAngle === 270) {
+            if (rotationType === ROTATIONS.LEFT_DOWN || rotationType === ROTATIONS.LEFT_UP) return zAxis;
+            else if (rotationType === ROTATIONS.RIGHT_DOWN || rotationType === ROTATIONS.RIGHT_UP) return xAxis;
+        }
+    }
+
+    #isRotationPositive(rotationType) {
+        var currAngle = this.global.levelAngle % 360;
+        currAngle = currAngle < 0 ? 360 + currAngle : currAngle;
+        currAngle = Math.round(currAngle);
+
+        if (rotationType === ROTATIONS.BASE_RIGHT) return true;
+        else if (rotationType === ROTATIONS.BASE_LEFT) return false;
+
+        if (currAngle === 0) {
+            if (rotationType === ROTATIONS.LEFT_DOWN || rotationType === ROTATIONS.RIGHT_UP) return true;
+            else if (rotationType === ROTATIONS.LEFT_UP || rotationType === ROTATIONS.RIGHT_DOWN) return false;
+        } else if (currAngle === 90) {
+            if (rotationType === ROTATIONS.LEFT_DOWN || rotationType === ROTATIONS.RIGHT_DOWN) return true;
+            else if (rotationType === ROTATIONS.LEFT_UP || rotationType === ROTATIONS.RIGHT_UP) return false;
+        } else if (currAngle === 180) {
+            if (rotationType === ROTATIONS.LEFT_DOWN || rotationType === ROTATIONS.RIGHT_UP) return false;
+            else if (rotationType === ROTATIONS.LEFT_UP || rotationType === ROTATIONS.RIGHT_DOWN) return true;
+        } else if (currAngle === 270) {
+            if (rotationType === ROTATIONS.LEFT_DOWN || rotationType === ROTATIONS.RIGHT_DOWN) return false;
+            else if (rotationType === ROTATIONS.LEFT_UP || rotationType === ROTATIONS.RIGHT_UP) return true;
+        }
+    }
+
+    #rotate(deltaTime, axis, positive, immediate) {
         const { cellSize } = constants;
 
         const animationDurationMs = 50;
-        const step = (90 / animationDurationMs) * deltaTime;
+        const step = immediate ? 90 : (90 / animationDurationMs) * deltaTime;
 
         for (let i = 0; i < this.cubes.length; i++) {
             const cube = this.cubes[i];
@@ -270,7 +353,7 @@ export default class Tetromino {
 
             const nextRotationAngle = this.cubeRotations[i] + step;
             const angleToRotate = step + (nextRotationAngle > 90 ? 90 - nextRotationAngle : 0);
-            this.cubeRotations[i] = Math.min(90, nextRotationAngle);
+            this.cubeRotations[i] = immediate ? 0 : Math.min(90, nextRotationAngle);
 
             cube.rotateOnWorldAxis(axis, THREE.Math.degToRad(angleToRotate * (positive ? 1 : -1)));
 
@@ -288,10 +371,6 @@ export default class Tetromino {
         this.rotating = false;
         this.currentRotation = ROTATIONS.NONE;
         this.cubeRotations = [0, 0, 0, 0];
-
-        this.cubePositions = this.cubes.map((cube) =>
-            worldToGridPos({ worldX: cube.position.x, worldY: cube.position.y, worldZ: cube.position.z })
-        );
     }
 
     // #################################################
@@ -387,8 +466,6 @@ export default class Tetromino {
             )
                 animating = true;
         }
-
-        this.#setTetrominoCenter();
 
         if (this.animating !== animating) {
             this.animating = animating;
