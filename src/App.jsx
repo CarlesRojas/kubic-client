@@ -1,6 +1,6 @@
-import { useContext, useEffect, useState, useCallback } from "react";
+import { useContext, useEffect, useState } from "react";
 
-import Onboarding from "./components/Onboarding";
+import Onboarding from "./components/onboarding/Onboarding";
 import Tutorial from "./components/tutorial/Tutorial";
 import MainLayout from "./components/layout/MainLayout";
 import Landscape from "./components/layout/Landscape";

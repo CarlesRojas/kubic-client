@@ -1,9 +1,9 @@
 import { useRef, useContext, useEffect, useState } from "react";
 import { useDrag } from "@use-gesture/react";
-import useGlobalState from "../hooks/useGlobalState";
-import { xyToIso } from "../game/Utils";
+import useGlobalState from "../../hooks/useGlobalState";
+import { xyToIso } from "../../game/Utils";
 
-import { Events } from "../contexts/Events";
+import { Events } from "../../contexts/Events";
 
 export default function Input() {
     const { emit, sub, unsub } = useContext(Events);

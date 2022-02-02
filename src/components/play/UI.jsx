@@ -1,13 +1,13 @@
 import { useContext } from "react";
 import SVG from "react-inlinesvg";
-import useGlobalState from "../hooks/useGlobalState";
-import useThrottle from "../hooks/useThrottle";
+import useGlobalState from "../../hooks/useGlobalState";
+import useThrottle from "../../hooks/useThrottle";
 
-import { Events } from "../contexts/Events";
+import { Events } from "../../contexts/Events";
 
-import LeftIcon from "../resources/icons/left.svg";
-import RightIcon from "../resources/icons/right.svg";
-import AutoFallIcon from "../resources/icons/autofall.svg";
+import LeftIcon from "../../resources/icons/left.svg";
+import RightIcon from "../../resources/icons/right.svg";
+import AutoFallIcon from "../../resources/icons/autofall.svg";
 
 export default function UI() {
     const { emit } = useContext(Events);
