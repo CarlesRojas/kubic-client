@@ -79,9 +79,9 @@ const constants = {
             num: 5,
             id: "L",
             positions: [
+                [0, 0, 0],
                 [0, 0, -1],
                 [0, 1, -1],
-                [0, 0, 0],
                 [0, 0, 1],
             ],
             colorPastel: "#707eff",

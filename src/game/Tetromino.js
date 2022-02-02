@@ -19,6 +19,7 @@ export default class Tetromino {
         this.cubes = [];
         this.cubePositions = [];
         this.cubeDisplacements = [];
+        this.nextTetromino = 0;
 
         this.rowsCleared = 0;
 
@@ -36,7 +37,9 @@ export default class Tetromino {
         this.shadows = [];
 
         this.isGameLost = false;
+    }
 
+    init() {
         // CREATE FIRST TETRO
         this.#decideNextTetromino();
         this.#spawnNextTetromino();
@@ -48,6 +51,46 @@ export default class Tetromino {
         this.global.events.sub("rotateBaseTetromino", this.#rotateBaseTetromino.bind(this));
         this.global.events.sub("rotateLeftTetromino", this.#rotateLeftTetromino.bind(this));
         this.global.events.sub("rotateRightTetromino", this.#rotateRightTetromino.bind(this));
+    }
+
+    load(saveData) {
+        if (!saveData) return;
+
+        for (let i = 0; i < this.cubes.length; i++) {
+            const cube = this.cubes[i];
+            const { worldX, worldY, worldZ } = gridPosToWorldPos(saveData.positions[i]);
+
+            cube.material.color.set(`#${saveData.color}`);
+            cube.position.x = worldX;
+            cube.position.y = worldY;
+            cube.position.z = worldZ;
+
+            this.cubePositions[i] = saveData.positions[i];
+        }
+
+        this.rowsCleared = saveData.rowsCleared;
+        this.nextTetromino = saveData.nextTetromino;
+        this.cubeDisplacements = [];
+
+        let positionOfFirst = null;
+        for (let i = 0; i < saveData.positions.length; i++) {
+            const position = saveData.positions[i];
+            if (!positionOfFirst) {
+                this.cubeDisplacements.push([0, 0, 0]);
+                positionOfFirst = position;
+                continue;
+            }
+
+            this.cubeDisplacements.push([
+                position.x - positionOfFirst.x,
+                position.y - positionOfFirst.y,
+                position.z - positionOfFirst.z,
+            ]);
+        }
+
+        this.#updateDifficulty();
+        this.#updateShadowPositions();
+        this.global.state.set("nextTetromino", this.nextTetromino);
     }
 
     update(timestamp, deltaTime) {
@@ -75,7 +118,7 @@ export default class Tetromino {
         const { colorPastel, positions } = tetrominos[this.nextTetromino];
         this.cubes = [];
         this.cubePositions = [];
-        this.cubeDisplacements = positions;
+        this.cubeDisplacements = positions.map((position) => [...position]);
         this.isAutoFalling = false;
 
         if (this.isGameLost) return;

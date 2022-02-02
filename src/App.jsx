@@ -1,4 +1,5 @@
 import { useContext, useEffect, useState } from "react";
+import ls from "local-storage";
 
 import Onboarding from "./components/onboarding/Onboarding";
 import Tutorial from "./components/tutorial/Tutorial";
@@ -30,8 +31,8 @@ export default function App() {
     const [data, setData] = useState({ username: null, tutorialDone: null });
 
     useEffect(() => {
-        const usernameCookie = getCookie(`${APP_NAME}_username`);
-        const tutorialDoneCookie = getCookie(`${APP_NAME}_tutorialDone`);
+        const usernameCookie = ls.get(`${APP_NAME}_username`);
+        const tutorialDoneCookie = ls.get(`${APP_NAME}_tutorialDone`);
         setData({ username: usernameCookie || false, tutorialDone: tutorialDoneCookie || false });
     }, [APP_NAME, getCookie]);
 
@@ -41,11 +42,11 @@ export default function App() {
 
     const { username, tutorialDone } = data;
 
-    if (username === null && tutorialDone === null) return null;
+    // if (username === null && tutorialDone === null) return null;
     if (isMobile && isLandscape) return <Landscape />;
 
-    if (!username) return <Onboarding />;
-    if (!tutorialDone) return <Tutorial />;
+    // if (!username) return <Onboarding />;
+    // if (!tutorialDone) return <Tutorial />;
     return (
         <>
             <Popup />

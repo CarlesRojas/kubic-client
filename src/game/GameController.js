@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import ls from "local-storage";
 import constants from "../constants";
 import Tetromino from "./Tetromino";
 
@@ -23,11 +24,12 @@ export default class GameController {
         this.tetromino = null;
     }
 
-    init({ globalState, events, width, height, container }) {
+    init({ globalState, events, width, height, container, APP_NAME }) {
         // VARIABLES
         this.global.state = globalState;
         this.global.events = events;
         this.container = container;
+        this.APP_NAME = APP_NAME;
 
         // CREATE SCENE
         this.#createScene();
@@ -46,6 +48,9 @@ export default class GameController {
         // SET GAME LOOP
         this.renderer.setAnimationLoop(this.#gameLoop.bind(this));
         this.#render();
+
+        // Load saved game
+        this.load();
 
         // SUB TO EVENTS
         this.global.events.sub("pause", this.pauseGame.bind(this));
@@ -79,9 +84,96 @@ export default class GameController {
     //   SAVE LOAD
     // #################################################
 
-    save() {}
+    save() {
+        const saveData = {};
 
-    load() {}
+        if (this.tetromino.isGameLost) {
+            ls.remove(`${this.APP_NAME}_saveData`);
+            return;
+        }
+
+        // Save grid state
+        const gridSaveState = [];
+        for (let i = 0; i < this.global.grid.length; i++) {
+            const yArray = [];
+
+            for (let j = 0; j < this.global.grid[i].length; j++) {
+                const zArray = [];
+
+                for (let k = 0; k < this.global.grid[i][j].length; k++) {
+                    const cube = this.global.grid[i][j][k];
+                    if (cube)
+                        zArray.push({
+                            position: { x: cube.position.x, y: cube.position.y, z: cube.position.z },
+                            color: cube.material.color.getHexString(),
+                        });
+                    else zArray.push(null);
+                }
+
+                yArray.push(zArray);
+            }
+            gridSaveState.push(yArray);
+        }
+        saveData.grid = gridSaveState;
+
+        // Save level angle
+        saveData.levelAngle = this.global.levelAngle;
+
+        // Save tetromino
+        const tetromino = {
+            positions: this.tetromino.cubePositions.map((position) => ({
+                x: position.x,
+                y: position.y,
+                z: position.z,
+            })),
+            color: this.tetromino.cubes[0].material.color.getHexString(),
+            rowsCleared: this.tetromino.rowsCleared,
+            nextTetromino: this.tetromino.nextTetromino,
+        };
+        saveData.tetromino = tetromino;
+
+        // Save all
+        ls.set(`${this.APP_NAME}_saveData`, saveData);
+    }
+
+    load() {
+        const saveData = ls.get(`${this.APP_NAME}_saveData`);
+
+        if (!saveData) return;
+        const { cellSize } = constants;
+
+        // Load grid
+        for (let i = 0; i < saveData.grid.length; i++) {
+            for (let j = 0; j < saveData.grid[i].length; j++) {
+                for (let k = 0; k < saveData.grid[i][j].length; k++) {
+                    const cubeInfo = saveData.grid[i][j][k];
+                    if (!cubeInfo) continue;
+
+                    const { position, color } = cubeInfo;
+
+                    const cube = new THREE.Mesh(
+                        new THREE.BoxBufferGeometry(cellSize * 0.95, cellSize * 0.95, cellSize * 0.95),
+                        new THREE.MeshLambertMaterial({ color: `#${color}` })
+                    );
+                    cube.position.x = position.x;
+                    cube.position.y = position.y;
+                    cube.position.z = position.z;
+
+                    this.global.level.add(cube);
+                    this.global.grid[i][j][k] = cube;
+                }
+            }
+        }
+
+        // Load level angle
+        this.global.levelAngle = saveData.levelAngle;
+        this.global.level.rotation.y = THREE.Math.degToRad(this.global.levelAngle);
+
+        // Load tetromino
+        this.tetromino.load(saveData.tetromino);
+
+        this.#render();
+    }
 
     // #################################################
     //   GAME LOOP
@@ -117,6 +209,7 @@ export default class GameController {
 
     #createTetromino() {
         this.tetromino = new Tetromino(this.global);
+        this.tetromino.init();
     }
 
     // #################################################
