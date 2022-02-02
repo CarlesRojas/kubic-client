@@ -10,10 +10,22 @@
 //      LAYOUTS
 // #######################################
 
-.MobileLayout {
+.MainLayout {
     position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     height: 100%;
     width: 100%;
+    background: rgb(157, 196, 255);
+    background: linear-gradient(-180deg, $backgroundBlue1 0%, $backgroundBlue2 100%);
+
+    .mainPagesContent {
+        position: relative;
+        height: calc(100% - #{$navBarHeight});
+        width: 100%;
+    }
 }
 
 // #######################################
@@ -27,8 +39,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgb(157, 196, 255);
-    background: linear-gradient(-180deg, rgb(170, 204, 255) 0%, rgb(145, 189, 255) 100%);
 }
 
 // #######################################
@@ -125,6 +135,312 @@
             &.reflectVertical {
                 transform: scaleY(-1);
             }
+        }
+    }
+}
+
+// #######################################
+//      ONBOARDING
+// #######################################
+
+.Onboarding {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgb(255, 222, 161);
+}
+
+// #######################################
+//      TUTORIAL
+// #######################################
+
+.Tutorial {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgb(161, 217, 255);
+}
+
+// #######################################
+//      PAGES
+// #######################################
+
+.Scores,
+.Play,
+.Settings {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+
+    h1 {
+        position: absolute;
+        height: $titleHeight;
+        width: 100%;
+        top: 0;
+        left: 0;
+        opacity: 0.9;
+        font-size: 1.3rem;
+        font-weight: 700;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &.weight {
+            position: relative;
+        }
+    }
+}
+
+// #######################################
+//      LANDSCAPE
+// #######################################
+
+.Landscape {
+    pointer-events: none;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 2000;
+
+    .contentContainer {
+        pointer-events: all;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: fit-content;
+        max-height: calc(100% - 2rem);
+        width: fit-content;
+        max-width: calc(100% - 2rem);
+        z-index: 1000;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        background-color: white;
+        border-radius: 1rem;
+        padding: 1.5rem;
+
+        .logoColor {
+            height: 3rem;
+            max-height: 3rem;
+            min-height: 3rem;
+            width: 3rem;
+            max-width: 3rem;
+            min-width: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            width: 100%;
+            opacity: 0.9;
+            font-size: 1.3rem;
+            font-weight: 700;
+            text-align: center;
+        }
+    }
+}
+
+// #######################################
+//      POPUP
+// #######################################
+
+.Popup {
+    pointer-events: none;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+
+    .blur {
+        pointer-events: all;
+        position: absolute;
+        height: 100%;
+        width: 100%;
+    }
+
+    .contentContainer {
+        pointer-events: all;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+        height: fit-content;
+        max-height: 90%;
+        width: calc(100% - 2rem);
+        max-width: 50rem;
+        z-index: 1000;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        background-color: $background;
+        border-radius: 1rem;
+
+        &.fullscreen {
+            pointer-events: none;
+            max-height: 100%;
+            height: 100%;
+            width: 100%;
+            max-width: 100%;
+            box-shadow: unset;
+            background-color: unset;
+            border-radius: unset;
+        }
+
+        &.addPadding {
+            padding: 1rem;
+        }
+
+        .closeApp {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+
+            .logoColor {
+                height: 3rem;
+                max-height: 3rem;
+                min-height: 3rem;
+                width: 3rem;
+                max-width: 3rem;
+                min-width: 3rem;
+                margin-bottom: 0.5rem;
+            }
+
+            h1 {
+                width: 100%;
+                opacity: 0.9;
+                margin-bottom: 1.5rem;
+                font-size: 1.3rem;
+                font-weight: 700;
+                text-align: center;
+            }
+
+            .closeButtons {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                width: 100%;
+
+                .closeButton {
+                    pointer-events: all;
+                    width: 12rem;
+                    min-width: fit-content;
+                    z-index: 1000;
+                    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+                    background-color: $closeButtonColor;
+                    border-radius: 100vw;
+                    padding: 0.8rem 1.6rem;
+                    font-weight: 700;
+                    text-align: center;
+                    color: rgba(0, 0, 0, 0.5);
+
+                    &.low {
+                        background-color: rgba(0, 0, 0, 0.1);
+                        margin-bottom: 1rem;
+                    }
+                }
+            }
+        }
+
+        .button {
+            pointer-events: all;
+            width: fit-content;
+            z-index: 1000;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            background-color: $closeButtonColor;
+            border-radius: 100vw;
+            padding: 0.8rem 1.6rem;
+            font-weight: 700;
+            text-align: center;
+            color: rgba(0, 0, 0, 0.5);
+        }
+    }
+}
+
+// #######################################
+//      NAVBAR
+// #######################################
+
+.Navbar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: $navBarHeight;
+    width: fit-content;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    background-color: white;
+    margin: $navbarPadding 0;
+    border-radius: 100vw;
+    padding: $navbarPadding 0;
+
+    .container {
+        position: relative;
+        display: flex;
+        align-items: center;
+        transition: background-color 0.2s ease-in-out, width 0.2s ease-in-out;
+        height: 100%;
+        width: calc(2rem + #{$navBarHeight * 0.4});
+        background-color: transparent;
+        margin: 0 $navbarPadding;
+        border-radius: 100vw;
+        padding: 0 1rem;
+
+        &.selected {
+            width: 8rem;
+            background-color: $backgroundBlue1;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1) inset;
+
+            .icon {
+                color: $navbarAccent;
+            }
+
+            .name {
+                transition: opacity 0.05s 0.15s ease-in-out, width 0.2s ease-in-out;
+                width: 5rem;
+                opacity: 1;
+            }
+        }
+
+        .icon {
+            transition: color 0.2s ease-in-out;
+            height: $navBarHeight * 0.4;
+            max-height: $navBarHeight * 0.4;
+            min-height: $navBarHeight * 0.4;
+            width: $navBarHeight * 0.4;
+            max-width: $navBarHeight * 0.4;
+            min-width: $navBarHeight * 0.4;
+            color: $navbarLow;
+        }
+
+        .name {
+            transition: opacity 0.05s ease-in-out, width 0.2s ease-in-out;
+            width: 0%;
+            opacity: 0;
+            padding-left: 0.5rem;
+            font-size: 0.95rem;
+            font-weight: 700;
+            text-align: center;
+            color: $navbarAccent;
         }
     }
 }
