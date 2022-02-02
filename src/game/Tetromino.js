@@ -31,11 +31,14 @@ export default class Tetromino {
         this.currentRotation = ROTATIONS.NONE;
         this.cubeRotations = [0, 0, 0, 0];
 
+        this.shadows = [];
+
         this.isGameLost = false;
 
         // CREATE FIRST TETRO
         this.#decideNextTetromino();
         this.#spawnNextTetromino();
+        this.#spawnShadows();
 
         // SUB TO EVENTS
         this.global.events.sub("rowCleared", this.#updateDifficulty.bind(this)); // ROJAS not being called
@@ -51,6 +54,7 @@ export default class Tetromino {
         else this.#keepFalling(timestamp);
 
         this.#animateCubes(timestamp, deltaTime);
+        this.#updateShadowPositions();
         this.#setTetrominoCenter();
     }
 
@@ -113,6 +117,7 @@ export default class Tetromino {
             // Lose Game
             if (position.y >= gridY) {
                 this.isGameLost = true;
+                console.log("LOST");
                 break;
             }
 
@@ -399,8 +404,9 @@ export default class Tetromino {
     }
 
     #autoFall() {
-        const { gridY } = constants;
+        if (this.isAutoFalling) return;
 
+        const { gridY } = constants;
         this.isAutoFalling = true;
 
         var newCubePositions = [];
@@ -484,8 +490,68 @@ export default class Tetromino {
         });
         const center = centroid(centers);
 
-        if (center && center.length > 1) this.global.events.emit("updateTetroPosition", { x: center[0], y: center[1] });
-        else this.global.events.emit("updateTetroPosition", { x: -1000000, y: 0 });
+        if (this.isGameLost || !center || center.length <= 1)
+            this.global.events.emit("updateTetroPosition", { x: -100000000, y: 0 });
+        else this.global.events.emit("updateTetroPosition", { x: center[0], y: center[1] });
+    }
+
+    // #################################################
+    //   SHADOW
+    // #################################################
+
+    #spawnShadows() {
+        const { cellSize } = constants;
+
+        for (let i = 0; i < this.cubes.length; i++) {
+            const shadow = new THREE.Mesh(
+                new THREE.PlaneGeometry(cellSize * 0.95, cellSize * 0.95),
+                new THREE.MeshLambertMaterial({ color: "black", transparent: true, opacity: 0.5 })
+            );
+
+            shadow.rotation.x = THREE.Math.degToRad(-90);
+
+            this.shadows.push(shadow);
+            this.global.level.add(shadow);
+        }
+    }
+
+    #updateShadowPositions() {
+        if (this.isAutoFalling) return;
+
+        const { cellSize } = constants;
+        const positions = [];
+
+        for (let i = 0; i < this.shadows.length; i++) {
+            const shadow = this.shadows[i];
+            const cubePos = this.cubePositions[i];
+
+            const found = positions.find(({ x, z }) => x === cubePos.x && z === cubePos.z);
+
+            if (found || this.isGameLost) {
+                shadow.position.x = -100000000;
+                continue;
+            }
+
+            positions.push({ x: cubePos.x, z: cubePos.z });
+
+            const y = this.#findHigestOccupiedCellInGrid({ x: cubePos.x, z: cubePos.z });
+            const { worldX, worldY, worldZ } = gridPosToWorldPos({ x: cubePos.x, y, z: cubePos.z });
+
+            shadow.position.x = worldX;
+            shadow.position.y = worldY + cellSize * 0.501;
+            shadow.position.z = worldZ;
+        }
+    }
+
+    #findHigestOccupiedCellInGrid({ x, z }) {
+        const { gridY } = constants;
+
+        for (let y = gridY - 1; y >= 0; y--) {
+            const cell = this.global.grid[x][y][z];
+            if (cell) return y;
+        }
+
+        return -1;
     }
 
     // #################################################

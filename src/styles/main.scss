@@ -59,8 +59,10 @@
 
     .gamaBoundingBox {
         position: relative;
+        pointer-events: none;
 
         .rotateTetro {
+            pointer-events: all;
             position: absolute;
             border-radius: 100vw;
             transform: translate3d(-50%, -50%, 0);
