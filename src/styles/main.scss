@@ -21,7 +21,9 @@
     width: 100%;
     top: 0;
     left: 0;
-    z-index: 5;
+    z-index: 50;
+    background: rgb(157, 196, 255);
+    background: linear-gradient(-180deg, $backgroundBlue1 0%, $backgroundBlue2 100%);
 
     .contentContainer {
         pointer-events: all;
@@ -34,9 +36,9 @@
         max-height: calc(100% - 2rem);
         width: fit-content;
         max-width: calc(100% - 2rem);
-        z-index: 6;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-        background-color: white;
+        z-index: 60;
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+        background-color: rgba(255, 255, 255, 0.9);
         border-radius: 1rem;
         padding: 1.5rem;
 
@@ -121,7 +123,7 @@
     margin: $navbarPadding 0;
     border-radius: 100vw;
     padding: $navbarPadding 0;
-    z-index: 2;
+    z-index: 20;
 
     .container {
         position: relative;
@@ -192,6 +194,11 @@
         position: absolute;
         height: 100%;
         width: 100%;
+        z-index: 15;
+
+        &.inFrontOfNavbar {
+            z-index: 25;
+        }
     }
 
     .contentContainer {
@@ -204,8 +211,8 @@
         max-height: 90%;
         width: calc(100% - 2rem);
         max-width: 50rem;
-        z-index: 3;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        z-index: 30;
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
         background-color: $background;
         border-radius: 1rem;
         padding: 1rem;
@@ -247,8 +254,8 @@
                     pointer-events: all;
                     width: 12rem;
                     min-width: fit-content;
-                    z-index: 4;
-                    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+                    z-index: 40;
+                    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
                     background-color: $closeButtonColor;
                     border-radius: 100vw;
                     padding: 0.8rem 1.6rem;
@@ -345,7 +352,7 @@
     align-items: center;
     justify-content: center;
     pointer-events: none;
-    z-index: 1;
+    z-index: 10;
 
     .gameContainer {
         position: relative;

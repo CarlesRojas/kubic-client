@@ -6,7 +6,7 @@ import { GlobalState } from "../contexts/GlobalState";
 import Logo from "../resources/icons/logoColor.svg";
 
 export default function useCloseApp() {
-    const { set } = useContext(GlobalState);
+    const { set, get } = useContext(GlobalState);
 
     const userInteracted = useRef(false);
 
@@ -14,32 +14,15 @@ export default function useCloseApp() {
         const handleStayInApp = () => {
             window.history.pushState(null, null, "");
 
-            set("showPopup", {
-                visible: false,
-                canCloseWithBackground: false,
-                closeButtonVisible: false,
-                addPadding: true,
-                fullscreen: false,
-                content: (
-                    <div className="closeApp">
-                        <SVG className="logoColor" src={Logo}></SVG>
-                        <h1>{"Click back again to close the app."}</h1>
-
-                        <div className="closeButtons">
-                            <div className="closeButton">Stay</div>
-                        </div>
-                    </div>
-                ),
-            });
+            set("showPopup", { ...get("showPopup"), visible: false });
         };
 
         const handleBrowserBack = () => {
             set("showPopup", {
                 visible: true,
-                canCloseWithBackground: false,
-                closeButtonVisible: false,
-                addPadding: true,
-                fullscreen: false,
+                canCloseWithBackground: true,
+                inFrontOfNavbar: true,
+                handleClose: handleStayInApp,
                 content: (
                     <div className="closeApp">
                         <SVG className="logoColor" src={Logo}></SVG>
@@ -74,5 +57,5 @@ export default function useCloseApp() {
             document.body.removeEventListener("click", handleInteraction);
             document.body.removeEventListener("touchstart", handleInteraction);
         };
-    }, [set]);
+    }, [set, get]);
 }

@@ -2,12 +2,11 @@ const initialState = {
     gameDimensions: { width: 0, height: 0 },
     loadingVisible: true,
     showPopup: {
-        show: false,
+        visible: false,
         canCloseWithBackground: false,
-        closeButtonVisible: true,
+        inFrontOfNavbar: true,
+        handleClose: () => null,
         content: null,
-        addPadding: true,
-        fullscreen: false,
     },
 };
 
