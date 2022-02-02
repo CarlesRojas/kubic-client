@@ -40,8 +40,11 @@ export const centroid = (points) => {
 export const worldToScreen = (obj, camera) => {
     var vector = new THREE.Vector3();
 
-    var widthHalf = 0.5 * window.innerWidth;
-    var heightHalf = 0.5 * window.innerHeight;
+    const canvas = document.getElementById("gameCanvas");
+    const box = canvas.getBoundingClientRect();
+
+    var widthHalf = 0.5 * box.width;
+    var heightHalf = 0.5 * box.height;
 
     obj.updateMatrixWorld();
     vector.setFromMatrixPosition(obj.matrixWorld);

@@ -271,6 +271,7 @@ export default class GameController {
         const prevCanvas = this.container.current.getElementsByTagName("canvas");
         if (prevCanvas.length) prevCanvas[0].parentNode.removeChild(prevCanvas[0]);
 
+        this.renderer.domElement.id = "gameCanvas";
         this.container.current.appendChild(this.renderer.domElement);
     }
 }

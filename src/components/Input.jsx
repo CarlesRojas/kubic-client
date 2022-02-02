@@ -92,9 +92,6 @@ export default function Input() {
                 cancel();
             }
 
-            // rotateTetroRef
-            // console.log(xy, my, vy);
-
             // Rotate vertical
             if (my > gestureThreshold * 4 || vy > 1) {
                 const box = rotateTetroRef.current.getBoundingClientRect();
@@ -118,6 +115,7 @@ export default function Input() {
     const [tetrominoCenter, setTetrominoCenter] = useState({ x: 0, y: 0 });
 
     const handleUpdateTetroPosition = (center) => {
+        // console.log(center);
         setTetrominoCenter(center);
     };
 
@@ -135,17 +133,23 @@ export default function Input() {
     return (
         <div className="Input">
             <div className="moveTetro" {...moveGestureBind()}></div>
+
             <div
-                className="rotateTetro"
-                style={{
-                    height: `${gameDimensions.width * 0.6}px`,
-                    width: `${gameDimensions.width * 0.6}px`,
-                    left: `${tetrominoCenter.x}px`,
-                    top: `${tetrominoCenter.y}px`,
-                }}
-                {...rotateGestureBind()}
-                ref={rotateTetroRef}
-            ></div>
+                className="gamaBoundingBox"
+                style={{ height: `${gameDimensions.height}px`, width: `${gameDimensions.width}px` }}
+            >
+                <div
+                    className="rotateTetro"
+                    style={{
+                        height: `${gameDimensions.width * 0.6}px`,
+                        width: `${gameDimensions.width * 0.6}px`,
+                        left: `${tetrominoCenter.x}px`,
+                        top: `${tetrominoCenter.y}px`,
+                    }}
+                    {...rotateGestureBind()}
+                    ref={rotateTetroRef}
+                ></div>
+            </div>
         </div>
     );
 }
