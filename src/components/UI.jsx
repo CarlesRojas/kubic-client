@@ -36,8 +36,8 @@ export default function UI() {
                 style={{ height: `${gameDimensions.height}px`, width: `${gameDimensions.width}px` }}
             >
                 <div className="rotateBaseIcons" style={{ height: `${gameDimensions.width * 0.13}px` }}>
-                    <SVG className="icon" src={LeftIcon} onClick={() => handleRotateBase(false)}></SVG>
-                    <SVG className="icon" src={RightIcon} onClick={() => handleRotateBase(true)}></SVG>
+                    <SVG className="icon reflectVertical" src={LeftIcon} onClick={() => handleRotateBase(true)}></SVG>
+                    <SVG className="icon reflectVertical" src={RightIcon} onClick={() => handleRotateBase(false)}></SVG>
                 </div>
 
                 <div className="autoFallIcons" style={{ height: `${gameDimensions.width * 0.13}px` }}>

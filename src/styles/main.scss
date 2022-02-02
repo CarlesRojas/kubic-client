@@ -121,6 +121,10 @@
             max-height: 100%;
             padding: 3%;
             pointer-events: all;
+
+            &.reflectVertical {
+                transform: scaleY(-1);
+            }
         }
     }
 }
