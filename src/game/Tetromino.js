@@ -20,6 +20,8 @@ export default class Tetromino {
         this.cubePositions = [];
         this.cubeDisplacements = [];
 
+        this.rowsCleared = 0;
+
         this.speedLimits = { min: 200, max: 2000, step: 100 };
         this.speed = this.speedLimits.max;
 
@@ -41,7 +43,6 @@ export default class Tetromino {
         this.#spawnShadows();
 
         // SUB TO EVENTS
-        this.global.events.sub("rowCleared", this.#updateDifficulty.bind(this)); // ROJAS not being called
         this.global.events.sub("autoFall", this.#autoFall.bind(this));
         this.global.events.sub("moveTetromino", this.#moveTetromino.bind(this));
         this.global.events.sub("rotateBaseTetromino", this.#rotateBaseTetromino.bind(this));
@@ -59,7 +60,7 @@ export default class Tetromino {
     }
 
     // #################################################
-    //   CREATE
+    //   TETROMINOS
     // #################################################
 
     #decideNextTetromino() {
@@ -106,22 +107,95 @@ export default class Tetromino {
         this.#decideNextTetromino();
     }
 
-    #saveCubesToGrid() {
-        const { gridY } = constants;
+    // #################################################
+    //   TETROMINO LANDED
+    // #################################################
 
-        // Save cubes to grid
+    #onTetrominoLanded(timestamp) {
+        this.#saveCubesToGrid();
+        this.#checkForRowsCleared();
+        this.#checkforGameLost();
+
+        if (this.isGameLost) return;
+
+        this.#spawnNextTetromino(timestamp);
+    }
+
+    #saveCubesToGrid() {
         for (let i = 0; i < this.cubes.length; i++) {
             const cube = this.cubes[i];
             const position = this.cubePositions[i];
 
-            // Lose Game
-            if (position.y >= gridY) {
-                this.isGameLost = true;
-                console.log("LOST");
-                break;
+            this.global.grid[position.x][position.y][position.z] = cube;
+        }
+    }
+
+    #checkforGameLost() {
+        if (!this.#areAllCubesInsideGrid(this.cubePositions, true)) {
+            this.isGameLost = true;
+            console.log("LOST");
+        }
+    }
+
+    #checkForRowsCleared() {
+        const { gridX, gridY, gridZ } = constants;
+
+        let numberOfRowsCleared = 0;
+
+        for (let y = 0; y < gridY; y++) {
+            let rowFull = true;
+
+            row: for (let x = 0; x < gridX; x++) {
+                for (let z = 0; z < gridZ; z++) {
+                    if (!this.global.grid[x][y][z]) {
+                        rowFull = false;
+                        break row;
+                    }
+                }
             }
 
-            this.global.grid[position.x][position.y][position.z] = cube;
+            if (rowFull) {
+                numberOfRowsCleared++;
+                this.#clearRow(y);
+                this.#lowerAllRowsAvobe(y + 1);
+                --y;
+            }
+        }
+
+        if (numberOfRowsCleared === 4) {
+            // ROJAS play TETRIS sound
+            console.log("TETRIS");
+        }
+
+        this.rowsCleared += numberOfRowsCleared;
+        this.#updateDifficulty();
+    }
+
+    #clearRow(y) {
+        const { gridX, gridZ } = constants;
+
+        for (let x = 0; x < gridX; x++) {
+            for (let z = 0; z < gridZ; z++) {
+                this.global.level.remove(this.global.grid[x][y][z]);
+                this.global.grid[x][y][z] = null;
+            }
+        }
+    }
+
+    #lowerAllRowsAvobe(row) {
+        const { gridX, gridY, gridZ, cellSize } = constants;
+
+        for (let y = row; y < gridY + 4; y++) {
+            for (let x = 0; x < gridX; x++) {
+                for (let z = 0; z < gridZ; z++) {
+                    const cube = this.global.grid[x][y][z];
+                    if (cube) {
+                        cube.position.y -= cellSize;
+                        this.global.grid[x][y - 1][z] = cube;
+                        this.global.grid[x][y][z] = null;
+                    }
+                }
+            }
         }
     }
 
@@ -129,9 +203,9 @@ export default class Tetromino {
     //   UPDATE DIFFICULTY
     // #################################################
 
-    #updateDifficulty(numberOfRowsCleared) {
+    #updateDifficulty() {
         const { min, max, step } = this.speedLimits;
-        this.speed = this.speed > min ? max - (numberOfRowsCleared / 4) * step : min;
+        this.speed = this.speed > min ? max - (this.rowsCleared / 4) * step : min;
     }
 
     // #################################################
@@ -394,8 +468,7 @@ export default class Tetromino {
                 newCubePositions.push({ ...this.cubePositions[i], y: this.cubePositions[i].y - 1 });
 
             if (!this.#isPositionCorrect(newCubePositions)) {
-                this.#saveCubesToGrid();
-                this.#spawnNextTetromino(timestamp);
+                this.#onTetrominoLanded(timestamp);
                 return;
             }
 
@@ -428,10 +501,9 @@ export default class Tetromino {
             }
 
             yDisp++;
-        } while (this.#isPositionCorrect(newCubePositions) && yDisp < gridY + 5);
+        } while (this.#isPositionCorrect(newCubePositions) && yDisp < gridY + 4);
 
         this.cubePositions = lastCorrectCubePositions;
-        this.#saveCubesToGrid();
     }
 
     // #################################################
@@ -480,7 +552,7 @@ export default class Tetromino {
     }
 
     #animationChangeState(timestamp) {
-        if (!this.animating && this.isAutoFalling) this.#spawnNextTetromino(timestamp);
+        if (!this.animating && this.isAutoFalling) this.#onTetrominoLanded(timestamp);
     }
 
     #setTetrominoCenter() {
@@ -562,14 +634,14 @@ export default class Tetromino {
         return this.#areAllCubesInsideGrid(positions) && !this.#someCubeCollided(positions);
     }
 
-    #areAllCubesInsideGrid(positions) {
-        const { gridX, gridZ } = constants;
+    #areAllCubesInsideGrid(positions, checkAvobeGrid = false) {
+        const { gridX, gridY, gridZ } = constants;
 
         for (let i = 0; i < positions.length; i++) {
             const { x, y, z } = positions[i];
 
             if (x < 0 || x >= gridX) return false;
-            if (y < 0) return false;
+            if (y < 0 || (checkAvobeGrid && y >= gridY)) return false;
             if (z < 0 || z >= gridZ) return false;
         }
 

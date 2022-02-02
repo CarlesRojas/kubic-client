@@ -129,7 +129,7 @@ export default class GameController {
         for (let i = 0; i < gridX; i++) {
             const yArray = [];
 
-            for (let j = 0; j < gridY; j++) {
+            for (let j = 0; j < gridY + 4; j++) {
                 const zArray = [];
 
                 for (let k = 0; k < gridZ; k++) zArray.push(null);
@@ -182,8 +182,9 @@ export default class GameController {
             const grid = new THREE.Group();
             grid.name = "grid";
 
-            for (let i = 0; i <= gridY; i++) {
-                const layer = new THREE.GridHelper(gridX * cellSize, gridX, "#ffd500", "#ffd500");
+            for (let i = 0; i <= gridY + 4; i++) {
+                const color = i >= gridY ? "#ff0000" : "0000ff";
+                const layer = new THREE.GridHelper(gridX * cellSize, gridX, color, color);
                 layer.position.y = cellSize * i;
                 grid.add(layer);
             }
