@@ -10,6 +10,7 @@ import useCloseApp from "./hooks/useCloseApp";
 import { MediaQuery } from "./contexts/MediaQuery";
 import { Data } from "./contexts/Data";
 import { Utils } from "./contexts/Utils";
+import Popup from "./components/layout/Popup";
 
 export default function App() {
     const { isMobile, isLandscape } = useContext(MediaQuery);
@@ -45,5 +46,10 @@ export default function App() {
 
     if (!username) return <Onboarding />;
     if (!tutorialDone) return <Tutorial />;
-    return <MainLayout />;
+    return (
+        <>
+            <Popup />
+            <MainLayout />
+        </>
+    );
 }

@@ -2,39 +2,42 @@ import { useEffect, useContext, useRef } from "react";
 import SVG from "react-inlinesvg";
 
 import { GlobalState } from "../contexts/GlobalState";
+import { Events } from "../contexts/Events";
 
-import Logo from "../resources/icons/logoColor.svg";
+import Logo from "../resources/icons/tetris.svg";
 
 export default function useCloseApp() {
     const { set, get } = useContext(GlobalState);
+    const { emit } = useContext(Events);
 
     const userInteracted = useRef(false);
 
     useEffect(() => {
         const handleStayInApp = () => {
             window.history.pushState(null, null, "");
-
             set("showPopup", { ...get("showPopup"), visible: false });
+            emit("stayInApp");
         };
 
         const handleBrowserBack = () => {
+            emit("maybeCloseApp");
+
             set("showPopup", {
                 visible: true,
-                canCloseWithBackground: true,
+                canCloseWithBackground: false,
                 inFrontOfNavbar: true,
                 handleClose: handleStayInApp,
                 content: (
-                    <div className="closeApp">
-                        <SVG className="logoColor" src={Logo}></SVG>
+                    <>
+                        <SVG className="logo" src={Logo}></SVG>
+                        <h1>{"KUBIC"}</h1>
 
-                        <h1>{"Click back again to close the app."}</h1>
+                        <p>{"Click back again to close the app."}</p>
 
-                        <div className="closeButtons">
-                            <div className="closeButton" onClick={handleStayInApp}>
-                                Stay
-                            </div>
+                        <div className="button" onClick={handleStayInApp}>
+                            Stay
                         </div>
-                    </div>
+                    </>
                 ),
             });
         };
@@ -57,5 +60,5 @@ export default function useCloseApp() {
             document.body.removeEventListener("click", handleInteraction);
             document.body.removeEventListener("touchstart", handleInteraction);
         };
-    }, [set, get]);
+    }, [set, get, emit]);
 }

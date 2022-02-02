@@ -1,5 +1,6 @@
 import { useContext } from "react";
 import SVG from "react-inlinesvg";
+import cn from "classnames";
 import useGlobalState from "../../hooks/useGlobalState";
 import useThrottle from "../../hooks/useThrottle";
 
@@ -21,7 +22,7 @@ import T7Icon from "../../resources/icons/T7.png";
 
 const TETROMINO_ICONS = [T0Icon, T1Icon, T2Icon, T3Icon, T4Icon, T5Icon, T6Icon, T7Icon];
 
-export default function UI() {
+export default function UI({ gamePaused }) {
     const { emit } = useContext(Events);
     const [gameDimensions] = useGlobalState("gameDimensions");
     const [nextTetromino] = useGlobalState("nextTetromino");
@@ -39,7 +40,7 @@ export default function UI() {
     }, 250);
 
     const handlePause = useThrottle(() => {
-        emit("pause");
+        emit("pauseGame", { showPausePopup: true });
     }, 250);
 
     // #################################################
@@ -53,7 +54,7 @@ export default function UI() {
                 style={{ height: `${gameDimensions.height}px`, width: `${gameDimensions.width}px` }}
             >
                 <div className="topIcons" style={{ height: `${gameDimensions.width * 0.13}px` }}>
-                    <SVG className="icon" src={PauseIcon} onClick={handlePause}></SVG>
+                    <SVG className={cn("icon", { gamePaused })} src={PauseIcon} onClick={handlePause}></SVG>
                     <img className="nextTetromino" src={TETROMINO_ICONS[nextTetromino]} alt="" />
                 </div>
 

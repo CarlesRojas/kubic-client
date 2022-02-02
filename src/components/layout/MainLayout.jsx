@@ -4,7 +4,6 @@ import Play from "../play/Play";
 import Scores from "../scores/Scores";
 import Settings from "../settings/Settings";
 import Navbar from "./Navbar";
-import Popup from "./Popup";
 
 import usePageAnimation from "../../hooks/usePageAnimation";
 
@@ -41,8 +40,6 @@ export default function MainLayout() {
         <div className="MainLayout">
             <Navbar setPage={setPage} currentPage={currentPage} />
             <div className="mainPagesContent">{renderedPages}</div>
-
-            <Popup />
         </div>
     );
 }

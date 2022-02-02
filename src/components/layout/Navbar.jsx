@@ -1,7 +1,10 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import cn from "classnames";
 import SVG from "react-inlinesvg";
 import useThrottle from "../../hooks/useThrottle";
+
+import { GlobalState } from "../../contexts/GlobalState";
+import { Events } from "../../contexts/Events";
 
 import ScoresIcon from "../../resources/icons/scores.svg";
 import PlayIcon from "../../resources/icons/play.svg";
@@ -23,6 +26,9 @@ const PAGES = [
 ];
 
 export default function Navbar({ setPage, currentPage }) {
+    const { set, get } = useContext(GlobalState);
+    const { emit } = useContext(Events);
+
     // #################################################
     //   STATE
     // #################################################
@@ -31,6 +37,9 @@ export default function Navbar({ setPage, currentPage }) {
 
     const setSelected = useThrottle((newIndex) => {
         if (selected === newIndex) return;
+
+        set("showPopup", { ...get("showPopup"), visible: false });
+        if (newIndex !== 1) emit("pauseGame", { showPausePopup: false });
 
         currentPage.current = newIndex;
         updateSelected(newIndex);
