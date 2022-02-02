@@ -65,13 +65,14 @@ export default class Tetromino {
 
     #decideNextTetromino() {
         const { tetrominos } = constants;
-        this.nestTetromino = Math.floor(Math.random() * tetrominos.length);
+        this.nextTetromino = Math.floor(Math.random() * tetrominos.length);
+        this.global.state.set("nextTetromino", this.nextTetromino);
     }
 
     #spawnNextTetromino(timestamp = 0) {
         const { tetrominos, gridX, gridY, gridZ, cellSize } = constants;
 
-        const { colorPastel, positions } = tetrominos[this.nestTetromino];
+        const { colorPastel, positions } = tetrominos[this.nextTetromino];
         this.cubes = [];
         this.cubePositions = [];
         this.cubeDisplacements = positions;
@@ -584,6 +585,8 @@ export default class Tetromino {
 
             this.shadows.push(shadow);
             this.global.level.add(shadow);
+
+            this.#updateShadowPositions();
         }
     }
 

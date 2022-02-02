@@ -11,7 +11,7 @@ export default class GameController {
             events: null,
             grid: [[[]]],
             levelAngle: 0,
-            paused: false,
+            paused: true,
             camera: null,
         };
 
@@ -43,20 +43,13 @@ export default class GameController {
         // CREATE TETROMINO
         this.#createTetromino();
 
-        // SUB TO EVENTS
-        this.global.events.sub("rotateLevel", this.#setLevelRotation.bind(this));
-    }
-
-    startGame() {
-        if (!this.renderer) return;
-
+        // SET GAME LOOP
         this.renderer.setAnimationLoop(this.#gameLoop.bind(this));
-    }
+        this.#render();
 
-    stopGame() {
-        if (!this.renderer) return;
-
-        this.renderer.setAnimationLoop(null);
+        // SUB TO EVENTS
+        this.global.events.sub("pause", this.pauseGame.bind(this));
+        this.global.events.sub("rotateLevel", this.#setLevelRotation.bind(this));
     }
 
     resumeGame() {
@@ -81,6 +74,14 @@ export default class GameController {
         this.global.state.set("gameDimensions", { width: gameWidth, height: gameHeight });
         this.renderer.setSize(gameWidth, gameHeight);
     }
+
+    // #################################################
+    //   SAVE LOAD
+    // #################################################
+
+    save() {}
+
+    load() {}
 
     // #################################################
     //   GAME LOOP

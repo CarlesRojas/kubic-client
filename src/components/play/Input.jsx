@@ -112,7 +112,7 @@ export default function Input() {
     //   UPDATE TETROMINO POSITION
     // #################################################
 
-    const [tetrominoCenter, setTetrominoCenter] = useState({ x: 0, y: 0 });
+    const [tetrominoCenter, setTetrominoCenter] = useState({ x: -10000000, y: 0 });
 
     const handleUpdateTetroPosition = (center) => {
         // console.log(center);

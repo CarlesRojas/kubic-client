@@ -38,10 +38,10 @@ export default function Play() {
         gameController.current = new GameController();
         gameController.current.init({ globalState, events, width, height, container });
 
-        gameController.current.startGame();
+        gameController.current.load();
 
         return () => {
-            gameController.current.stopGame();
+            gameController.current.save();
         };
     }, [globalState, events]);
 
