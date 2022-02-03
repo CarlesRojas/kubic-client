@@ -44,7 +44,7 @@ export default function Navbar({ setPage, currentPage }) {
     const setSelected = useThrottle((newIndex) => {
         if (selected === newIndex) return;
 
-        vibrate(25);
+        vibrate(40);
 
         set("showPopup", { ...get("showPopup"), visible: false });
         if (newIndex !== 1) emit("pauseGame", { showPausePopup: false });

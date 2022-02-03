@@ -35,17 +35,17 @@ export default function UI({ gamePaused }) {
     // #################################################
 
     const handleRotateBase = useThrottle((rotateRight) => {
-        vibrate(25);
+        vibrate(40);
         emit("rotateLevel", rotateRight);
     }, 250);
 
     const handleAutoFall = useThrottle(() => {
-        vibrate(25);
+        vibrate(40);
         emit("autoFall");
     }, 250);
 
     const handlePause = useThrottle(() => {
-        vibrate(25);
+        vibrate(40);
         emit("pauseGame", { showPausePopup: true });
     }, 250);
 

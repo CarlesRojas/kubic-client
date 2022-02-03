@@ -22,8 +22,8 @@
     top: 0;
     left: 0;
     z-index: 50;
-    background: rgb(157, 196, 255);
-    background: linear-gradient(-180deg, $blue1 0%, $blue2 100%);
+    background: $background1;
+    background: linear-gradient(-180deg, $background1 0%, $background2 100%);
 }
 
 .Loading {
@@ -65,8 +65,8 @@
     justify-content: center;
     height: 100%;
     width: 100%;
-    background: rgb(157, 196, 255);
-    background: linear-gradient(-180deg, $blue1 0%, $blue2 100%);
+    background: $background1;
+    background: linear-gradient(-180deg, $background1 0%, $background2 100%);
 
     .mainPagesContent {
         position: relative;
@@ -111,10 +111,34 @@
         &.selected {
             width: 8rem;
             box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1) inset;
-            background-color: $blue1;
+            background-color: $blueBack !important;
+
+            &.navbarScores {
+                background-color: $orangeBack;
+            }
+
+            &.navbarPlay {
+                background-color: $purpleBack;
+            }
+
+            &.navbarSettings {
+                background-color: $greenBack;
+            }
 
             .icon {
-                color: $blue3;
+                color: $blue !important;
+
+                &.navbarScores {
+                    color: $orange;
+                }
+
+                &.navbarPlay {
+                    color: $purple;
+                }
+
+                &.navbarSettings {
+                    color: $green;
+                }
             }
 
             .name {
@@ -138,12 +162,24 @@
         .name {
             transition: opacity 0.05s ease-in-out, width 0.2s ease-in-out;
             width: 0%;
-            color: $blue3;
             opacity: 0;
             padding-left: 0.5rem;
             font-size: 0.95rem;
             font-weight: 700;
             text-align: center;
+            color: $blue !important;
+
+            &.navbarScores {
+                color: $orange;
+            }
+
+            &.navbarPlay {
+                color: $purple;
+            }
+
+            &.navbarSettings {
+                color: $green;
+            }
         }
     }
 }
@@ -198,7 +234,7 @@
         width: 3rem;
         max-width: 3rem;
         min-width: 3rem;
-        color: rgb(162, 0, 255);
+        color: $purple;
         margin-bottom: -1rem;
     }
 
@@ -232,7 +268,7 @@
         &.highScore {
             font-size: 1.2rem;
             font-weight: 700;
-            color: rgba(162, 0, 255, 1);
+            color: $purple;
         }
     }
 
@@ -243,8 +279,8 @@
         min-width: fit-content;
         z-index: 40;
         box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1) inset;
-        background-color: rgba(235, 199, 255, 1);
-        color: rgba(162, 0, 255, 1);
+        background-color: $purpleBack;
+        color: $purple;
         border-radius: 100vw;
         padding: 0.8rem 1.6rem;
         font-weight: 700;

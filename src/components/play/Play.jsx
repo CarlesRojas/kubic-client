@@ -65,7 +65,7 @@ export default function Play() {
     const gameLost = useRef(false);
 
     const handleContinueGame = useCallback(() => {
-        vibrate(25);
+        vibrate(40);
         setGamePaused(false);
         gameController.current.resumeGame();
     }, [vibrate]);
@@ -74,7 +74,7 @@ export default function Play() {
         (forceNew) => {
             const saveData = ls.get(`${APP_NAME}_saveData`);
 
-            vibrate(25);
+            vibrate(40);
 
             if (newGameClicked || !saveData) {
                 setGamePaused(false);
