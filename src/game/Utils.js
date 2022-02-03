@@ -41,6 +41,7 @@ export const worldToScreen = (obj, camera) => {
     var vector = new THREE.Vector3();
 
     const canvas = document.getElementById("gameCanvas");
+    if (!canvas) return;
     const box = canvas.getBoundingClientRect();
 
     var widthHalf = 0.5 * box.width;

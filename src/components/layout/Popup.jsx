@@ -13,9 +13,9 @@ export default function Popup() {
     // #################################################
 
     const blurTransition = useTransition(visible, {
-        from: { backgroundColor: "rgba(0, 0, 0, 0)", backdropFilter: "blur(10px) opacity(0)" },
-        enter: { backgroundColor: "rgba(0, 0, 0, 0.3)", backdropFilter: "blur(10px) opacity(1)" },
-        leave: { backgroundColor: "rgba(0, 0, 0, 0)", backdropFilter: "blur(10px) opacity(0)" },
+        from: { backgroundColor: "rgba(0, 0, 0, 0)", backdropFilter: "blur(6px) opacity(0)" },
+        enter: { backgroundColor: "rgba(0, 0, 0, 0.3)", backdropFilter: "blur(6px) opacity(1)" },
+        leave: { backgroundColor: "rgba(0, 0, 0, 0)", backdropFilter: "blur(6px) opacity(0)" },
         reverse: visible,
     });
 

@@ -177,7 +177,7 @@ export default class Tetromino {
     #checkforGameLost() {
         if (!this.#areAllCubesInsideGrid(this.cubePositions, true)) {
             this.isGameLost = true;
-            console.log("LOST");
+            this.global.events.emit("gameLost");
         }
     }
 
@@ -547,6 +547,8 @@ export default class Tetromino {
             yDisp++;
         } while (this.#isPositionCorrect(newCubePositions) && yDisp < gridY + 4);
 
+        if (this.#arePositionsTheSame(this.cubePositions, lastCorrectCubePositions)) this.animating = true;
+
         this.cubePositions = lastCorrectCubePositions;
     }
 
@@ -704,5 +706,20 @@ export default class Tetromino {
         }
 
         return false;
+    }
+
+    #arePositionsTheSame(positions1, positions2) {
+        for (let i = 0; i < positions1.length; i++) {
+            if (i >= positions2.length) return false;
+
+            const position1 = positions1[i];
+            const position2 = positions2[i];
+
+            if (position1.x !== position2.x) return false;
+            if (position1.y !== position2.y) return false;
+            if (position1.z !== position2.z) return false;
+        }
+
+        return true;
     }
 }

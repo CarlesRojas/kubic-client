@@ -60,27 +60,31 @@ export default function Play() {
     const [gamePaused, setGamePaused] = useState(true);
     const [newGameClicked, setNewGameClicked] = useAutoResetState(false, 2000);
     const ignoreNext = useRef(false);
+    const gameLost = useRef(false);
 
     const handleContinueGame = useCallback(() => {
         setGamePaused(false);
         gameController.current.resumeGame();
     }, []);
 
-    const handleNewGame = useCallback(() => {
-        const saveData = ls.get(`${APP_NAME}_saveData`);
+    const handleNewGame = useCallback(
+        (forceNew) => {
+            const saveData = ls.get(`${APP_NAME}_saveData`);
 
-        if (newGameClicked || !saveData) {
-            setGamePaused(false);
+            if (newGameClicked || !saveData) {
+                setGamePaused(false);
 
-            if (saveData) {
-                ls.remove(`${APP_NAME}_saveData`);
-                init();
+                if (saveData || forceNew) {
+                    ls.remove(`${APP_NAME}_saveData`);
+                    init();
+                }
+                gameController.current.resumeGame();
+            } else {
+                setNewGameClicked(true);
             }
-            gameController.current.resumeGame();
-        } else {
-            setNewGameClicked(true);
-        }
-    }, [newGameClicked, setNewGameClicked, init, APP_NAME]);
+        },
+        [newGameClicked, setNewGameClicked, init, APP_NAME]
+    );
 
     const handlePauseGame = useCallback(({ showPausePopup }) => {
         ignoreNext.current = !showPausePopup;
@@ -97,10 +101,37 @@ export default function Play() {
 
         globalState.set("navbarVisible", gamePaused);
 
-        const saveData = ls.get(`${APP_NAME}_saveData`);
+        if (!gamePaused) return globalState.set("showPopup", { ...globalState.get("showPopup"), visible: false });
 
+        if (gameLost.current) {
+            gameLost.current = false;
+
+            globalState.set("showPopup", {
+                visible: true,
+                canCloseWithBackground: false,
+                inFrontOfNavbar: false,
+                handleClose: () => null,
+                content: (
+                    <>
+                        <SVG className="logo" src={Logo}></SVG>
+                        <h1>{"GAME OVER"}</h1>
+
+                        <p>Score: 4050</p>
+                        <p className="highScore">NEW HIGH SCORE</p>
+
+                        <div className="button" onClick={() => handleNewGame(true)}>
+                            NEW GAME
+                        </div>
+                    </>
+                ),
+            });
+
+            return;
+        }
+
+        const saveData = ls.get(`${APP_NAME}_saveData`);
         globalState.set("showPopup", {
-            visible: gamePaused,
+            visible: true,
             canCloseWithBackground: false,
             inFrontOfNavbar: false,
             handleClose: () => null,
@@ -115,7 +146,10 @@ export default function Play() {
                         </div>
                     )}
 
-                    <div className={cn("button", { low: saveData && !newGameClicked })} onClick={handleNewGame}>
+                    <div
+                        className={cn("button", { low: saveData && !newGameClicked })}
+                        onClick={() => handleNewGame(false)}
+                    >
                         NEW GAME
                     </div>
 
@@ -130,6 +164,12 @@ export default function Play() {
     useEffect(() => {
         showPopup();
     }, [gamePaused, showPopup]);
+
+    const handleGameLost = useCallback(() => {
+        ls.remove(`${APP_NAME}_saveData`);
+        gameLost.current = true;
+        setGamePaused(true);
+    }, []);
 
     // #################################################
     //   STAY IN APP
@@ -149,15 +189,21 @@ export default function Play() {
         globalState.set("navbarVisible", true);
     }, [showPopup, globalState]);
 
+    // #################################################
+    //   EVENTS
+    // #################################################
+
     useEffect(() => {
         events.sub("pauseGame", handlePauseGame);
         events.sub("maybeCloseApp", handleMaybeCloseApp);
         events.sub("stayInApp", handleStayInApp);
+        events.sub("gameLost", handleGameLost);
 
         return () => {
             events.unsub("pauseGame", handlePauseGame);
             events.unsub("maybeCloseApp", handleMaybeCloseApp);
             events.unsub("stayInApp", handleStayInApp);
+            events.unsub("gameLost", handleGameLost);
         };
     }, [events, handleStayInApp, handlePauseGame, handleMaybeCloseApp]);
 
