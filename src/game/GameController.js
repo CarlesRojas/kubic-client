@@ -3,6 +3,24 @@ import ls from "local-storage";
 import constants from "../constants";
 import Tetromino from "./Tetromino";
 
+import FailSound from "../resources/sounds/Fail.mp3";
+import GameOverSound from "../resources/sounds/GameOver.mp3";
+import LandSound from "../resources/sounds/Land.mp3";
+import LineSound from "../resources/sounds/Line.mp3";
+import MoveSound from "../resources/sounds/Move.mp3";
+import RotateSound from "../resources/sounds/Rotate.mp3";
+import TetrisSound from "../resources/sounds/Tetris.mp3";
+
+const SOUNDS = {
+    failSound: { src: FailSound, volume: 0.07 },
+    gameOverSound: { src: GameOverSound, volume: 0.1 },
+    landSound: { src: LandSound, volume: 0.15 },
+    lineSound: { src: LineSound, volume: 0.2 },
+    moveSound: { src: MoveSound, volume: 0.06 },
+    rotateSound: { src: RotateSound, volume: 0.15 },
+    tetrisSound: { src: TetrisSound, volume: 0.2 },
+};
+
 export default class GameController {
     constructor() {
         // VARIABLES
@@ -10,6 +28,7 @@ export default class GameController {
             level: null,
             state: null,
             events: null,
+            sounds: SOUNDS,
             grid: [[[]]],
             levelAngle: 0,
             paused: true,
@@ -30,7 +49,7 @@ export default class GameController {
         this.global.state = globalState;
         this.global.events = events;
         this.container = container;
-        this.APP_NAME = APP_NAME;
+        this.global.APP_NAME = APP_NAME;
 
         // CREATE SCENE
         this.#createScene();
@@ -92,7 +111,7 @@ export default class GameController {
         const saveData = {};
 
         if (this.tetromino.isGameLost) {
-            ls.remove(`${this.APP_NAME}_saveData`);
+            ls.remove(`${this.global.APP_NAME}_saveData`);
             return;
         }
 
@@ -140,11 +159,11 @@ export default class GameController {
         saveData.score = this.global.score;
 
         // Save all
-        ls.set(`${this.APP_NAME}_saveData`, saveData);
+        ls.set(`${this.global.APP_NAME}_saveData`, saveData);
     }
 
     load() {
-        const saveData = ls.get(`${this.APP_NAME}_saveData`);
+        const saveData = ls.get(`${this.global.APP_NAME}_saveData`);
 
         if (!saveData) return;
         const { cellSize } = constants;

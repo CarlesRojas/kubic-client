@@ -94,3 +94,43 @@ export const isoToXy = ({ x, z }) => {
     const result = multiplyMatrices([[-x, -z]], transformMatrix);
     return { x: result[0][0], y: result[0][1] };
 };
+
+const throttle = (func, delay) => {
+    let prev = 0;
+    return (...args) => {
+        let now = new Date().getTime();
+
+        if (now - prev > delay) {
+            prev = now;
+            return func(...args);
+        }
+    };
+};
+
+var audioSources = [];
+var audioSourceIndex = 0;
+var concurrentAudioSources = 10;
+
+export const playSound = (sound, volume) => {
+    if (audioSourceIndex >= audioSources.length) audioSources.push(new Audio());
+
+    audioSources[audioSourceIndex].pause();
+    audioSources[audioSourceIndex].setAttribute("src", sound);
+    audioSources[audioSourceIndex].volume = volume;
+    audioSources[audioSourceIndex].play();
+    audioSourceIndex++;
+
+    if (audioSourceIndex >= concurrentAudioSources) audioSourceIndex = 0;
+};
+
+export const playSoundThrottled = throttle((sound, volume) => {
+    if (audioSourceIndex >= audioSources.length) audioSources.push(new Audio());
+
+    audioSources[audioSourceIndex].pause();
+    audioSources[audioSourceIndex].setAttribute("src", sound);
+    audioSources[audioSourceIndex].volume = volume;
+    audioSources[audioSourceIndex].play();
+    audioSourceIndex++;
+
+    if (audioSourceIndex >= concurrentAudioSources) audioSourceIndex = 0;
+}, 300);
