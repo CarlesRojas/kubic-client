@@ -1,4 +1,5 @@
 import { createContext } from "react";
+import ls from "local-storage";
 
 export const Utils = createContext();
 const UtilsProvider = (props) => {
@@ -176,6 +177,10 @@ const UtilsProvider = (props) => {
     // ###################################################
 
     const vibrate = (miliseconds) => {
+        const muteVibration = ls.get("kubic_muteVibration"); // ROJAS MUTE VIBRATION
+
+        if (muteVibration) return;
+
         // Check for support
         navigator.vibrate = navigator.vibrate || navigator.webkitVibrate || navigator.mozVibrate || navigator.msVibrate;
 

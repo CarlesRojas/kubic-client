@@ -7,6 +7,7 @@ import useGlobalState from "../../hooks/useGlobalState";
 
 import { GlobalState } from "../../contexts/GlobalState";
 import { Events } from "../../contexts/Events";
+import { Utils } from "../../contexts/Utils";
 
 import ScoresIcon from "../../resources/icons/scores.svg";
 import PlayIcon from "../../resources/icons/play.svg";
@@ -30,6 +31,7 @@ const PAGES = [
 export default function Navbar({ setPage, currentPage }) {
     const { set, get } = useContext(GlobalState);
     const { emit } = useContext(Events);
+    const { vibrate } = useContext(Utils);
 
     const [visible] = useGlobalState("navbarVisible");
 
@@ -41,6 +43,8 @@ export default function Navbar({ setPage, currentPage }) {
 
     const setSelected = useThrottle((newIndex) => {
         if (selected === newIndex) return;
+
+        vibrate(25);
 
         set("showPopup", { ...get("showPopup"), visible: false });
         if (newIndex !== 1) emit("pauseGame", { showPausePopup: false });

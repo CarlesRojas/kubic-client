@@ -5,6 +5,7 @@ import useGlobalState from "../../hooks/useGlobalState";
 import useThrottle from "../../hooks/useThrottle";
 
 import { Events } from "../../contexts/Events";
+import { Utils } from "../../contexts/Utils";
 
 import LeftIcon from "../../resources/icons/left.svg";
 import RightIcon from "../../resources/icons/right.svg";
@@ -24,6 +25,8 @@ const TETROMINO_ICONS = [T0Icon, T1Icon, T2Icon, T3Icon, T4Icon, T5Icon, T6Icon,
 
 export default function UI({ gamePaused }) {
     const { emit, sub, unsub } = useContext(Events);
+    const { vibrate } = useContext(Utils);
+
     const [gameDimensions] = useGlobalState("gameDimensions");
     const [nextTetromino] = useGlobalState("nextTetromino");
 
@@ -32,14 +35,17 @@ export default function UI({ gamePaused }) {
     // #################################################
 
     const handleRotateBase = useThrottle((rotateRight) => {
+        vibrate(25);
         emit("rotateLevel", rotateRight);
     }, 250);
 
     const handleAutoFall = useThrottle(() => {
+        vibrate(25);
         emit("autoFall");
     }, 250);
 
     const handlePause = useThrottle(() => {
+        vibrate(25);
         emit("pauseGame", { showPausePopup: true });
     }, 250);
 

@@ -13,6 +13,7 @@ import useAutoResetState from "../../hooks/useAutoResetState";
 import { GlobalState } from "../../contexts/GlobalState";
 import { Events } from "../../contexts/Events";
 import { Data } from "../../contexts/Data";
+import { Utils } from "../../contexts/Utils";
 
 import Logo from "../../resources/icons/tetris.svg";
 
@@ -20,6 +21,7 @@ export default function Play() {
     const globalState = useContext(GlobalState);
     const events = useContext(Events);
     const { APP_NAME } = useContext(Data);
+    const { vibrate } = useContext(Utils);
 
     const container = useRef();
     const gameController = useRef();
@@ -63,13 +65,16 @@ export default function Play() {
     const gameLost = useRef(false);
 
     const handleContinueGame = useCallback(() => {
+        vibrate(25);
         setGamePaused(false);
         gameController.current.resumeGame();
-    }, []);
+    }, [vibrate]);
 
     const handleNewGame = useCallback(
         (forceNew) => {
             const saveData = ls.get(`${APP_NAME}_saveData`);
+
+            vibrate(25);
 
             if (newGameClicked || !saveData) {
                 setGamePaused(false);
@@ -83,7 +88,7 @@ export default function Play() {
                 setNewGameClicked(true);
             }
         },
-        [newGameClicked, setNewGameClicked, init, APP_NAME]
+        [newGameClicked, setNewGameClicked, init, APP_NAME, vibrate]
     );
 
     const handlePauseGame = useCallback(({ showPausePopup }) => {
