@@ -1,7 +1,9 @@
 import { useState, useContext } from "react";
 import cn from "classnames";
 import SVG from "react-inlinesvg";
+
 import useThrottle from "../../hooks/useThrottle";
+import useGlobalState from "../../hooks/useGlobalState";
 
 import { GlobalState } from "../../contexts/GlobalState";
 import { Events } from "../../contexts/Events";
@@ -29,6 +31,8 @@ export default function Navbar({ setPage, currentPage }) {
     const { set, get } = useContext(GlobalState);
     const { emit } = useContext(Events);
 
+    const [visible] = useGlobalState("navbarVisible");
+
     // #################################################
     //   STATE
     // #################################################
@@ -51,7 +55,7 @@ export default function Navbar({ setPage, currentPage }) {
     // #################################################
 
     return (
-        <div className={"Navbar"}>
+        <div className={cn("Navbar", { visible })}>
             {PAGES.map(({ name, icon }, i) => (
                 <div
                     className={cn("container", { selected: selected === i }, { middle: i === 1 }, `navbar${name}`)}

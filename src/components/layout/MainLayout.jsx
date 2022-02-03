@@ -38,8 +38,8 @@ export default function MainLayout() {
 
     return (
         <div className="MainLayout">
-            <Navbar setPage={setPage} currentPage={currentPage} />
             <div className="mainPagesContent">{renderedPages}</div>
+            <Navbar setPage={setPage} currentPage={currentPage} />
         </div>
     );
 }

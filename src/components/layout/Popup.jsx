@@ -20,9 +20,9 @@ export default function Popup() {
     });
 
     const contentTransition = useTransition(visible, {
-        from: { translateY: "100vh" },
+        from: { translateY: "-100vh" },
         enter: { translateY: "0vh" },
-        leave: { translateY: "100vh" },
+        leave: { translateY: "-100vh" },
         reverse: visible,
     });
 

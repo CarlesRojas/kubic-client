@@ -95,6 +95,8 @@ export default function Play() {
             return;
         }
 
+        globalState.set("navbarVisible", gamePaused);
+
         const saveData = ls.get(`${APP_NAME}_saveData`);
 
         globalState.set("showPopup", {
@@ -116,6 +118,10 @@ export default function Play() {
                     <div className={cn("button", { low: saveData && !newGameClicked })} onClick={handleNewGame}>
                         NEW GAME
                     </div>
+
+                    <div className={cn("message", { visible: newGameClicked })}>
+                        Your current game will be lost. Click again to confirm.
+                    </div>
                 </>
             ),
         });
@@ -129,17 +135,19 @@ export default function Play() {
     //   STAY IN APP
     // #################################################
 
-    const handleMaybeCloseApp = () => {
+    const handleMaybeCloseApp = useCallback(() => {
         ignoreNext.current = true;
         setGamePaused(true);
         gameController.current.pauseGame();
         gameController.current.save();
-    };
+        globalState.set("navbarVisible", false);
+    }, [globalState]);
 
     const handleStayInApp = useCallback(() => {
         ignoreNext.current = false;
         showPopup();
-    }, [showPopup]);
+        globalState.set("navbarVisible", true);
+    }, [showPopup, globalState]);
 
     useEffect(() => {
         events.sub("pauseGame", handlePauseGame);
@@ -151,7 +159,7 @@ export default function Play() {
             events.unsub("maybeCloseApp", handleMaybeCloseApp);
             events.unsub("stayInApp", handleStayInApp);
         };
-    }, [events, handleStayInApp, handlePauseGame]);
+    }, [events, handleStayInApp, handlePauseGame, handleMaybeCloseApp]);
 
     // #################################################
     //   RENDER

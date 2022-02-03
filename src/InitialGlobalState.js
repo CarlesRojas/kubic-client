@@ -4,6 +4,7 @@ const initialState = {
     gameDimensions: { width: 0, height: 0 },
 
     // LAYOUT
+    navbarVisible: true,
     loadingVisible: true,
     showPopup: {
         visible: false,
