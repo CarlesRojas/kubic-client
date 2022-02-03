@@ -36,14 +36,17 @@ export default class Tetromino {
 
         this.shadows = [];
 
+        this.limits = [];
+
         this.isGameLost = false;
     }
 
     init() {
-        // CREATE FIRST TETRO
+        // CREATE FIRST TETRO, SHADOWS AND LIMITS
         this.#decideNextTetromino();
         this.#spawnNextTetromino();
         this.#spawnShadows();
+        this.#spawnLimits();
 
         // SUB TO EVENTS
         this.global.events.sub("autoFall", this.#autoFall.bind(this));
@@ -90,6 +93,7 @@ export default class Tetromino {
 
         this.#updateDifficulty();
         this.#updateShadowPositions();
+        this.#updateLimitOpacities();
         this.global.state.set("nextTetromino", this.nextTetromino);
     }
 
@@ -129,7 +133,7 @@ export default class Tetromino {
                 new THREE.MeshLambertMaterial({ color: colorPastel })
             );
 
-            const initialGridPos = { x: Math.floor(gridX / 2) - 1, y: gridY, z: Math.floor(gridZ / 2) - 1 };
+            const initialGridPos = { x: Math.floor(gridX / 2) - 1, y: gridY + 1, z: Math.floor(gridZ / 2) - 1 };
             const blockInitialGridPos = {
                 x: initialGridPos.x + positions[i][0],
                 y: initialGridPos.y + positions[i][1],
@@ -159,6 +163,7 @@ export default class Tetromino {
         this.#saveCubesToGrid();
         this.#checkForRowsCleared();
         this.#checkforGameLost();
+        this.#updateLimitOpacities();
 
         if (this.isGameLost) return;
 
@@ -681,12 +686,66 @@ export default class Tetromino {
     #findHigestOccupiedCellInGrid({ x, z }) {
         const { gridY } = constants;
 
-        for (let y = gridY - 1; y >= 0; y--) {
+        for (let y = gridY; y >= 0; y--) {
             const cell = this.global.grid[x][y][z];
             if (cell) return y;
         }
 
         return -1;
+    }
+
+    // #################################################
+    //   LIMITS
+    // #################################################
+
+    #spawnLimits() {
+        const { cellSize, gridX, gridY, gridZ } = constants;
+
+        const limits = [];
+        for (let x = 0; x < gridX; x++) {
+            const row = [];
+
+            for (let z = 0; z < gridZ; z++) {
+                const limit = new THREE.Mesh(
+                    new THREE.BoxBufferGeometry(cellSize * 0.951, cellSize * 0.1, cellSize * 0.951),
+                    new THREE.MeshLambertMaterial({ color: "#ff3721", transparent: true, opacity: 0 })
+                );
+                // const limit = new THREE.Mesh(
+                //     new THREE.PlaneGeometry(cellSize * 0.95, cellSize * 0.95),
+                //     new THREE.MeshLambertMaterial({ color: "#ff3721", transparent: true, opacity: 0 })
+                // );
+
+                const { worldX, worldY, worldZ } = gridPosToWorldPos({ x, y: gridY, z });
+
+                // limit.rotation.x = THREE.Math.degToRad(-90);
+                limit.position.x = worldX;
+                limit.position.y = worldY - cellSize * 0.45;
+                limit.position.z = worldZ;
+
+                row.push(limit);
+                this.global.level.add(limit);
+            }
+
+            limits.push(row);
+        }
+
+        this.limits = limits;
+        this.#updateLimitOpacities();
+    }
+
+    #updateLimitOpacities() {
+        const { gridX, gridY, gridZ } = constants;
+
+        for (let x = 0; x < gridX; x++) {
+            for (let z = 0; z < gridZ; z++) {
+                const y = this.#findHigestOccupiedCellInGrid({ x, z });
+
+                if (y >= gridY - 1) this.limits[x][z].material.opacity = 0.6;
+                else if (y === gridY - 2) this.limits[x][z].material.opacity = 0.4;
+                else if (y === gridY - 3) this.limits[x][z].material.opacity = 0.2;
+                else this.limits[x][z].material.opacity = 0;
+            }
+        }
     }
 
     // #################################################

@@ -288,8 +288,8 @@ export default class GameController {
             const grid = new THREE.Group();
             grid.name = "grid";
 
-            for (let i = 0; i <= gridY + 4; i++) {
-                const color = i >= gridY ? "#ff0000" : "0000ff";
+            for (let i = 0; i <= gridY + 2; i++) {
+                const color = i >= gridY ? "#ff0000" : "#0000ff";
                 const layer = new THREE.GridHelper(gridX * cellSize, gridX, color, color);
                 layer.position.y = cellSize * i;
                 grid.add(layer);
@@ -346,12 +346,12 @@ export default class GameController {
 
     #createCamera() {
         const aspectRatio = 9 / 19;
-        const width = 75;
+        const width = 85;
         const height = width / aspectRatio;
 
         this.global.camera = new THREE.OrthographicCamera(width / -2, width / 2, height / 2, height / -2, 10, 1000);
 
-        const verticalDisplacement = 60;
+        const verticalDisplacement = 70;
         this.global.camera.position.set(100, 75 + verticalDisplacement, 100);
         this.global.camera.lookAt(0, verticalDisplacement, 0);
     }
