@@ -211,6 +211,8 @@ export default class Tetromino {
             console.log("TETRIS");
         }
 
+        this.#updateScore(numberOfRowsCleared);
+
         this.rowsCleared += numberOfRowsCleared;
         this.#updateDifficulty();
     }
@@ -241,6 +243,19 @@ export default class Tetromino {
                 }
             }
         }
+    }
+
+    // #################################################
+    //   UPDATE SCORE
+    // #################################################
+
+    #updateScore(numOfLinesCleared) {
+        if (numOfLinesCleared <= 0 || numOfLinesCleared > 4) return;
+
+        const scorePoints = [10, 30, 50, 100];
+        this.global.score += scorePoints[numOfLinesCleared - 1];
+
+        this.global.events.emit("updateScore", this.global.score);
     }
 
     // #################################################

@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect, useCallback, useState } from "react";
 import SVG from "react-inlinesvg";
 import cn from "classnames";
 import useGlobalState from "../../hooks/useGlobalState";
@@ -23,7 +23,7 @@ import T7Icon from "../../resources/icons/T7.png";
 const TETROMINO_ICONS = [T0Icon, T1Icon, T2Icon, T3Icon, T4Icon, T5Icon, T6Icon, T7Icon];
 
 export default function UI({ gamePaused }) {
-    const { emit } = useContext(Events);
+    const { emit, sub, unsub } = useContext(Events);
     const [gameDimensions] = useGlobalState("gameDimensions");
     const [nextTetromino] = useGlobalState("nextTetromino");
 
@@ -44,6 +44,24 @@ export default function UI({ gamePaused }) {
     }, 250);
 
     // #################################################
+    //   SCORE
+    // #################################################
+
+    const [score, setScore] = useState(0);
+
+    const handleUpdateScore = useCallback((score) => {
+        setScore(score);
+    }, []);
+
+    useEffect(() => {
+        sub("updateScore", handleUpdateScore);
+
+        return () => {
+            unsub("updateScore", handleUpdateScore);
+        };
+    }, [sub, unsub, handleUpdateScore]);
+
+    // #################################################
     //   RENDER
     // #################################################
 
@@ -55,6 +73,7 @@ export default function UI({ gamePaused }) {
             >
                 <div className="topIcons" style={{ height: `${gameDimensions.width * 0.13}px` }}>
                     <SVG className={cn("icon", { gamePaused })} src={PauseIcon} onClick={handlePause}></SVG>
+                    <p className="score">{score}</p>
                     <img className="nextTetromino" src={TETROMINO_ICONS[nextTetromino]} alt="" />
                 </div>
 

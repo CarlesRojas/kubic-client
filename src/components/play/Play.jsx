@@ -116,8 +116,9 @@ export default function Play() {
                         <SVG className="logo" src={Logo}></SVG>
                         <h1>{"GAME OVER"}</h1>
 
-                        <p>Score: 4050</p>
-                        <p className="highScore">NEW HIGH SCORE</p>
+                        <p className="score">score</p>
+                        <p className="scoreValue">{gameController.current.global.score}</p>
+                        <p className="highScore">NEW HIGH SCORE!</p>
 
                         <div className="button" onClick={() => handleNewGame(true)}>
                             NEW GAME
@@ -167,9 +168,10 @@ export default function Play() {
 
     const handleGameLost = useCallback(() => {
         ls.remove(`${APP_NAME}_saveData`);
+        gameController.current.pauseGame();
         gameLost.current = true;
         setGamePaused(true);
-    }, []);
+    }, [APP_NAME]);
 
     // #################################################
     //   STAY IN APP
@@ -205,7 +207,7 @@ export default function Play() {
             events.unsub("stayInApp", handleStayInApp);
             events.unsub("gameLost", handleGameLost);
         };
-    }, [events, handleStayInApp, handlePauseGame, handleMaybeCloseApp]);
+    }, [events, handleStayInApp, handlePauseGame, handleMaybeCloseApp, handleGameLost]);
 
     // #################################################
     //   RENDER

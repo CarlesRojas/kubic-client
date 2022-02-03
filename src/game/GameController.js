@@ -14,6 +14,7 @@ export default class GameController {
             levelAngle: 0,
             paused: true,
             camera: null,
+            score: 0,
         };
 
         this.scene = null;
@@ -48,6 +49,9 @@ export default class GameController {
         // SET GAME LOOP
         this.renderer.setAnimationLoop(this.#gameLoop.bind(this));
         this.#render();
+
+        // UPDATE SCORE
+        this.global.events.emit("updateScore", this.global.score);
 
         // Load saved game
         this.load();
@@ -132,6 +136,9 @@ export default class GameController {
         };
         saveData.tetromino = tetromino;
 
+        // Save the score
+        saveData.score = this.global.score;
+
         // Save all
         ls.set(`${this.APP_NAME}_saveData`, saveData);
     }
@@ -171,6 +178,11 @@ export default class GameController {
 
         // Load tetromino
         this.tetromino.load(saveData.tetromino);
+
+        // Load the score
+        this.global.score = saveData.score;
+
+        this.global.events.emit("updateScore", saveData.score);
 
         this.#render();
     }
