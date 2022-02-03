@@ -87,7 +87,7 @@
     bottom: 0;
     z-index: 20;
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
-    background-color: white;
+    background-color: $navBarBackground;
     margin: $navbarPadding 0;
     border-radius: 100vw;
     padding: $navbarPadding 0;
@@ -156,7 +156,7 @@
             width: $navBarHeight * 0.4;
             max-width: $navBarHeight * 0.4;
             min-width: $navBarHeight * 0.4;
-            color: $navbarLow;
+            color: $background2;
         }
 
         .name {
@@ -419,7 +419,7 @@
                 font-weight: 700;
                 font-size: 2rem;
                 text-align: center;
-                opacity: 0.3;
+                color: $iconTop;
             }
 
             .nextTetromino {
@@ -456,8 +456,12 @@
             height: 100%;
             max-height: 100%;
             min-height: 100%;
-            color: rgba(0, 0, 0, 0.3);
+            color: $iconBottom;
             padding: 3%;
+
+            &.top {
+                color: $iconTop;
+            }
 
             &.reflectVertical {
                 transform: scaleY(-1);

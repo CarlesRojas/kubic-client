@@ -78,7 +78,7 @@ export default function UI({ gamePaused }) {
                 style={{ height: `${gameDimensions.height}px`, width: `${gameDimensions.width}px` }}
             >
                 <div className="topIcons" style={{ height: `${gameDimensions.width * 0.13}px` }}>
-                    <SVG className={cn("icon", { gamePaused })} src={PauseIcon} onClick={handlePause}></SVG>
+                    <SVG className={cn("icon top", { gamePaused })} src={PauseIcon} onClick={handlePause}></SVG>
                     <p className="score">{score}</p>
                     <img className="nextTetromino" src={TETROMINO_ICONS[nextTetromino]} alt="" />
                 </div>
