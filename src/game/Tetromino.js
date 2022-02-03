@@ -1,7 +1,6 @@
 import * as THREE from "three";
 import constants from "../constants";
-import ls from "local-storage";
-import { centroid, gridPosToWorldPos, worldToGridPos, worldToScreen, playSound, playSoundThrottled } from "./Utils";
+import { centroid, gridPosToWorldPos, worldToGridPos, worldToScreen, playSound, loadAudios } from "./Utils";
 
 const ROTATIONS = {
     NONE: "none",
@@ -40,6 +39,8 @@ export default class Tetromino {
         this.limits = [];
 
         this.isGameLost = false;
+
+        loadAudios();
     }
 
     init() {
@@ -168,7 +169,7 @@ export default class Tetromino {
 
         if (this.isGameLost) return;
 
-        if (!rowsCleared) this.#playSound("landSound");
+        if (!rowsCleared) playSound("landSound");
 
         this.#spawnNextTetromino(timestamp);
     }
@@ -184,7 +185,7 @@ export default class Tetromino {
 
     #checkforGameLost() {
         if (!this.#areAllCubesInsideGrid(this.cubePositions, true)) {
-            this.#playSound("gameOverSound");
+            playSound("gameOverSound");
 
             this.isGameLost = true;
             this.global.events.emit("gameLost");
@@ -216,8 +217,8 @@ export default class Tetromino {
             }
         }
 
-        if (numberOfRowsCleared === 4) this.#playSound("tetrisSound");
-        else if (numberOfRowsCleared > 0) this.#playSound("lineSound");
+        if (numberOfRowsCleared === 4) playSound("tetrisSound");
+        else if (numberOfRowsCleared > 0) playSound("lineSound");
 
         this.#updateScore(numberOfRowsCleared);
 
@@ -292,12 +293,7 @@ export default class Tetromino {
             });
         }
 
-        if (!this.#isPositionCorrect(newCubePositions)) {
-            this.#playSound("failSound", true);
-            return;
-        }
-
-        this.#playSound("moveSound");
+        if (!this.#isPositionCorrect(newCubePositions)) return;
 
         this.cubePositions = newCubePositions;
     }
@@ -344,8 +340,8 @@ export default class Tetromino {
             this.currentRotation = rotateRight ? ROTATIONS.BASE_RIGHT : ROTATIONS.BASE_LEFT;
             this.cubeRotations = [0, 0, 0, 0];
 
-            this.#playSound("rotateSound");
-        } else this.#playSound("failSound");
+            playSound("rotateSound");
+        } else playSound("failSound");
     }
 
     #rotateLeftTetromino(rotateDown) {
@@ -356,8 +352,8 @@ export default class Tetromino {
             this.currentRotation = rotateDown ? ROTATIONS.LEFT_DOWN : ROTATIONS.LEFT_UP;
             this.cubeRotations = [0, 0, 0, 0];
 
-            this.#playSound("rotateSound");
-        } else this.#playSound("failSound");
+            playSound("rotateSound");
+        } else playSound("failSound");
     }
 
     #rotateRightTetromino(rotateDown) {
@@ -368,8 +364,8 @@ export default class Tetromino {
             this.currentRotation = rotateDown ? ROTATIONS.RIGHT_DOWN : ROTATIONS.RIGHT_UP;
             this.cubeRotations = [0, 0, 0, 0];
 
-            this.#playSound("rotateSound");
-        } else this.#playSound("failSound");
+            playSound("rotateSound");
+        } else playSound("failSound");
     }
 
     #calculateRotationDisplacement(rotation) {
@@ -802,15 +798,5 @@ export default class Tetromino {
         }
 
         return true;
-    }
-
-    #playSound(id, throttleTime = false) {
-        const mute = ls.get(`${this.global.APP_NAME}_mute`); // ROJAS MUTE
-        if (mute) return;
-
-        const { src, volume } = this.global.sounds[id];
-
-        if (throttleTime) playSoundThrottled(src, volume);
-        else playSound(src, volume);
     }
 }

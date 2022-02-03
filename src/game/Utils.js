@@ -1,5 +1,44 @@
 import constants from "../constants";
+import ls from "local-storage";
 import * as THREE from "three";
+
+import FailSound from "../resources/sounds/Fail.mp3";
+import GameOverSound from "../resources/sounds/GameOver.mp3";
+import LandSound from "../resources/sounds/Land.mp3";
+import LineSound from "../resources/sounds/Line.mp3";
+import MoveSound from "../resources/sounds/Move.mp3";
+import RotateSound from "../resources/sounds/Rotate.mp3";
+import TetrisSound from "../resources/sounds/Tetris.mp3";
+
+const SOUNDS = {
+    failSound: { id: "failSound", src: FailSound, volume: 0.07, audio: null },
+    gameOverSound: { id: "gameOverSound", src: GameOverSound, volume: 0.1, audio: null },
+    landSound: { id: "landSound", src: LandSound, volume: 0.15, audio: null },
+    lineSound: { id: "lineSound", src: LineSound, volume: 0.2, audio: null },
+    moveSound: { id: "moveSound", src: MoveSound, volume: 0.06, audio: null },
+    rotateSound: { id: "rotateSound", src: RotateSound, volume: 0.15, audio: null },
+    tetrisSound: { id: "tetrisSound", src: TetrisSound, volume: 0.2, audio: null },
+};
+
+export const loadAudios = () => {
+    Object.values(SOUNDS).forEach(({ id, src, audio }) => {
+        if (!audio) SOUNDS[id].audio = new Audio(src);
+    });
+};
+
+export const playSound = (id) => {
+    if (!(id in SOUNDS)) return;
+
+    const mute = ls.get(`kubic_mute`); // ROJAS MUTE
+    if (mute) return;
+
+    if (!SOUNDS[id].audio) loadAudios();
+
+    SOUNDS[id].audio.pause();
+    SOUNDS[id].currentTime = 0;
+    SOUNDS[id].audio.volume = SOUNDS[id].volume;
+    SOUNDS[id].audio.play();
+};
 
 export const gridPosToWorldPos = ({ x, y, z }) => {
     const { cellSize, gridX, gridZ } = constants;
@@ -94,43 +133,3 @@ export const isoToXy = ({ x, z }) => {
     const result = multiplyMatrices([[-x, -z]], transformMatrix);
     return { x: result[0][0], y: result[0][1] };
 };
-
-const throttle = (func, delay) => {
-    let prev = 0;
-    return (...args) => {
-        let now = new Date().getTime();
-
-        if (now - prev > delay) {
-            prev = now;
-            return func(...args);
-        }
-    };
-};
-
-var audioSources = [];
-var audioSourceIndex = 0;
-var concurrentAudioSources = 10;
-
-export const playSound = (sound, volume) => {
-    if (audioSourceIndex >= audioSources.length) audioSources.push(new Audio());
-
-    audioSources[audioSourceIndex].pause();
-    audioSources[audioSourceIndex].setAttribute("src", sound);
-    audioSources[audioSourceIndex].volume = volume;
-    audioSources[audioSourceIndex].play();
-    audioSourceIndex++;
-
-    if (audioSourceIndex >= concurrentAudioSources) audioSourceIndex = 0;
-};
-
-export const playSoundThrottled = throttle((sound, volume) => {
-    if (audioSourceIndex >= audioSources.length) audioSources.push(new Audio());
-
-    audioSources[audioSourceIndex].pause();
-    audioSources[audioSourceIndex].setAttribute("src", sound);
-    audioSources[audioSourceIndex].volume = volume;
-    audioSources[audioSourceIndex].play();
-    audioSourceIndex++;
-
-    if (audioSourceIndex >= concurrentAudioSources) audioSourceIndex = 0;
-}, 300);
