@@ -426,15 +426,15 @@
     bottom: 0;
     left: 0;
     display: flex;
-    align-items: center;
     justify-content: center;
     background: $background1;
     background: linear-gradient(-180deg, $background1 0%, $background2 100%);
 
     .contentContainer {
+        position: absolute;
+        top: 5rem;
         transition: transform 0.5s ease-in-out;
         transition-delay: 0.5s;
-        margin-bottom: 50%;
         transform: translateY(-100vh);
 
         &.visible {
@@ -459,10 +459,11 @@
         bottom: 0;
         left: 0;
         display: flex;
-        align-items: center;
         justify-content: center;
 
         img {
+            position: absolute;
+            top: 3rem;
             width: 70%;
             max-width: 25rem;
         }
