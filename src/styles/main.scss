@@ -347,10 +347,10 @@
     .input {
         pointer-events: all;
         transition: all 0.2s ease-in-out;
-        width: 15rem;
+        width: 20rem;
         min-width: fit-content;
         z-index: 40;
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
         background-color: white;
         color: balck;
         border-radius: 100vw;
@@ -854,7 +854,7 @@
         }
 
         .nextButton {
-            transition: all 0.2s ease-in-out;
+            pointer-events: none;
             min-width: fit-content;
             z-index: 40;
             box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);

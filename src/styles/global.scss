@@ -50,10 +50,10 @@ video {
     transition: background-color 10000s;
     width: inherit;
     box-sizing: border-box;
-    border: 0px solid rgba(255, 255, 255, 0);
+    border: 0px solid rgba(0, 0, 0, 0);
     border-radius: 1000px;
-    padding: 0 10px;
-    -webkit-text-fill-color: $background;
+    box-shadow: 0 0 0px 1000px rgb(255, 255, 255) inset, 0 10px 20px rgba(0, 0, 0, 0.15) !important;
+    -webkit-text-fill-color: black;
 }
 
 //Remove focus

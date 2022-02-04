@@ -155,7 +155,7 @@ const APIProvider = (props) => {
     const deleteAccount = async () => {
         try {
             const rawResponse = await fetch(`${API_URL}${API_VERSION}/deleteAccount`, {
-                method: "get",
+                method: "post",
                 headers: {
                     Accept: "application/json, text/plain, */*",
                     "Content-Type": "application/json",

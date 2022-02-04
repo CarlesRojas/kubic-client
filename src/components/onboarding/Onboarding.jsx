@@ -18,7 +18,10 @@ export default function Onboarding() {
 
     const username = useRef("");
     const password = useRef("");
+    const usernameInputRef = useRef();
+    const passwordInputRef = useRef();
     const [error, setError] = useState("");
+    const [currFocused, setCurrFocused] = useState("username");
 
     // #################################################
     //   CHECK VALIDITY
@@ -58,14 +61,20 @@ export default function Onboarding() {
     };
 
     const handleKeyDown = (event) => {
-        if (event.key === "Enter") handleEnter();
+        if ((event.key === "Enter" || event.key === "Tab") && currFocused === "username") {
+            event.preventDefault();
+            passwordInputRef.current.focus();
+        }
+        if (event.key === "Enter" && currFocused === "password") {
+            event.preventDefault();
+            handleEnter();
+        }
     };
 
     // #################################################
     //    FOCUS
     // #################################################
 
-    const usernameInputRef = useRef();
     const [visible, setVisible] = useState(false);
 
     useEffect(() => {
@@ -95,10 +104,12 @@ export default function Onboarding() {
                 <input
                     className="input first"
                     type="text"
+                    name="kubic"
                     autoComplete="new-password"
+                    autofill="off"
                     onChange={handleUsernameChange}
+                    onFocus={() => setCurrFocused("username")}
                     ref={usernameInputRef}
-                    title="username"
                     placeholder=""
                     maxLength="12"
                 />
@@ -108,8 +119,11 @@ export default function Onboarding() {
                     className="input"
                     type="password"
                     autoComplete="new-password"
+                    autofill="off"
+                    name="kubic"
                     onChange={handlePasswordChange}
-                    title="password"
+                    onFocus={() => setCurrFocused("password")}
+                    ref={passwordInputRef}
                     placeholder=""
                 />
 
