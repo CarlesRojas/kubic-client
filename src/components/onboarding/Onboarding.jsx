@@ -1,12 +1,10 @@
 import { useState, useRef, useContext, useEffect } from "react";
 import cn from "classnames";
 import SVG from "react-inlinesvg";
-import ls from "local-storage";
 
 import useThrottle from "../../hooks/useThrottle";
 
 import { API } from "../../contexts/API";
-import { Data } from "../../contexts/Data";
 import { Events } from "../../contexts/Events";
 
 import Logo from "../../resources/icons/tetris.svg";
@@ -14,7 +12,6 @@ import BackgroundImage from "../../resources/images/Onboarding.png";
 
 export default function Onboarding() {
     const { loginOrRegister } = useContext(API);
-    const { APP_NAME } = useContext(Data);
     const { emit } = useContext(Events);
 
     const username = useRef("");
