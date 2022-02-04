@@ -22,13 +22,14 @@ body {
     position: fixed;
     height: 100%;
     width: 100%;
-    background-color: $background;
     color: $text;
     font-family: "Montserrat", sans-serif;
     touch-action: none;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overscroll-behavior-y: contain;
+    background: $background1;
+    background: linear-gradient(-180deg, $background1 0%, $background2 100%);
 }
 
 #root {

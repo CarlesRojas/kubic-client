@@ -14,6 +14,7 @@ import { GlobalState } from "../../contexts/GlobalState";
 import { Events } from "../../contexts/Events";
 import { Data } from "../../contexts/Data";
 import { Utils } from "../../contexts/Utils";
+import { API } from "../../contexts/API";
 
 import Logo from "../../resources/icons/tetris.svg";
 
@@ -22,6 +23,7 @@ export default function Play() {
     const events = useContext(Events);
     const { APP_NAME } = useContext(Data);
     const { vibrate } = useContext(Utils);
+    const { setScore } = useContext(API);
 
     const container = useRef();
     const gameController = useRef();
@@ -111,6 +113,9 @@ export default function Play() {
         if (gameLost.current) {
             gameLost.current = false;
 
+            const highestScore = ls.get(`${APP_NAME}_score`);
+            const currScore = gameController.current.global.score;
+
             globalState.set("showPopup", {
                 visible: true,
                 canCloseWithBackground: false,
@@ -122,8 +127,8 @@ export default function Play() {
                         <h1>{"GAME OVER"}</h1>
 
                         <p className="score">score</p>
-                        <p className="scoreValue">{gameController.current.global.score}</p>
-                        <p className="highScore">NEW HIGH SCORE!</p>
+                        <p className={cn("scoreValue", { high: currScore > highestScore })}>{currScore}</p>
+                        {currScore > highestScore && <p className="highScore">NEW HIGH SCORE!</p>}
 
                         <div className="button" onClick={() => handleNewGame(true)}>
                             NEW GAME
@@ -136,6 +141,8 @@ export default function Play() {
         }
 
         const saveData = ls.get(`${APP_NAME}_saveData`);
+        const highestScore = ls.get(`${APP_NAME}_score`);
+
         globalState.set("showPopup", {
             visible: true,
             canCloseWithBackground: false,
@@ -159,6 +166,9 @@ export default function Play() {
                         NEW GAME
                     </div>
 
+                    {highestScore > 0 && <p className="yourScore">Your highest score:</p>}
+                    {highestScore > 0 && <p className="yourScoreValue">{highestScore}</p>}
+
                     <div className={cn("message", { visible: newGameClicked })}>
                         Your current game will be lost. Click again to confirm.
                     </div>
@@ -172,11 +182,19 @@ export default function Play() {
     }, [gamePaused, showPopup]);
 
     const handleGameLost = useCallback(() => {
+        const username = ls.get(`${APP_NAME}_username`);
+        const highestScore = ls.get(`${APP_NAME}_score`);
+
+        if (username && gameController.current.global.score > highestScore)
+            setScore(username, gameController.current.global.score);
+
         ls.remove(`${APP_NAME}_saveData`);
+
         gameController.current.pauseGame();
+
         gameLost.current = true;
         setGamePaused(true);
-    }, [APP_NAME]);
+    }, [APP_NAME, setScore]);
 
     // #################################################
     //   STAY IN APP
