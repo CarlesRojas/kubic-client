@@ -71,12 +71,24 @@ export default function TutorialUI({ stage, STAGES, handleNextStage, handleStage
                 )}
 
                 <div className="rotateBaseIcons" style={{ height: `${gameDimensions.width * 0.13}px` }}>
-                    <SVG className="icon reflectVertical" src={LeftIcon} onClick={() => handleRotateBase(true)}></SVG>
-                    <SVG className="icon reflectVertical" src={RightIcon} onClick={() => handleRotateBase(false)}></SVG>
+                    <SVG
+                        className={cn("icon", "reflectVertical", { hidden: stage.current < 5 })}
+                        src={LeftIcon}
+                        onClick={() => handleRotateBase(true)}
+                    ></SVG>
+                    <SVG
+                        className={cn("icon", "reflectVertical", { hidden: stage.current < 5 })}
+                        src={RightIcon}
+                        onClick={() => handleRotateBase(false)}
+                    ></SVG>
                 </div>
 
                 <div className="autoFallIcons" style={{ height: `${gameDimensions.width * 0.13}px` }}>
-                    <SVG className="icon" src={AutoFallIcon} onClick={handleAutoFall}></SVG>
+                    <SVG
+                        className={cn("icon", { hidden: stage.current < 4 })}
+                        src={AutoFallIcon}
+                        onClick={handleAutoFall}
+                    ></SVG>
                 </div>
             </div>
         </div>

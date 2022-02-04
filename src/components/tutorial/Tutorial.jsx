@@ -151,7 +151,8 @@ export default function Tutorial() {
     // #################################################
 
     return (
-        <div className="Tutorial" ref={container}>
+        <div className="Tutorial">
+            <div className="tutorialContainer" ref={container}></div>
             <TutorialInput stage={stage} handleStageDone={handleStageDone} />
             <TutorialUI
                 stage={stage}

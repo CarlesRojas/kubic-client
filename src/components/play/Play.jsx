@@ -253,7 +253,8 @@ export default function Play() {
     // #################################################
 
     return (
-        <div className="Play" ref={container}>
+        <div className="Play">
+            <div className="playContainer" ref={container}></div>
             <Input />
             <UI gamePaused={gamePaused} />
         </div>

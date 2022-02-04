@@ -6,6 +6,7 @@ import useThrottle from "../../hooks/useThrottle";
 
 import { API } from "../../contexts/API";
 import { Events } from "../../contexts/Events";
+import { Utils } from "../../contexts/Utils";
 
 import Logo from "../../resources/icons/tetris.svg";
 import BackgroundImage from "../../resources/images/Onboarding.png";
@@ -13,6 +14,7 @@ import BackgroundImage from "../../resources/images/Onboarding.png";
 export default function Onboarding() {
     const { loginOrRegister } = useContext(API);
     const { emit } = useContext(Events);
+    const { vibrate } = useContext(Utils);
 
     const username = useRef("");
     const password = useRef("");
@@ -27,6 +29,8 @@ export default function Onboarding() {
 
     const handleEnter = useThrottle(async () => {
         if (loadingRef.current) return;
+
+        vibrate(40);
 
         loadingRef.current = true;
         setLoading(true);
