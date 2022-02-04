@@ -30,16 +30,19 @@ export default function App() {
     //   LOAD DATA
     // #################################################
 
-    const [userLoaded, setUserLoaded] = useState(null);
+    const [userData, setUserData] = useState({ loggedIn: null, tutorialDone: null });
 
     const handleRefreshApp = useCallback(async () => {
         const tokenInCookie = ls.get(`${APP_NAME}_token`);
 
-        if (!tokenInCookie) return setUserLoaded(false);
+        if (!tokenInCookie) return setUserData(false);
 
         token.current = tokenInCookie;
         const success = await getUserInfo();
-        setUserLoaded(success);
+
+        const tutorialDone = ls.get(`${APP_NAME}_tutorialStatus`);
+
+        setUserData({ loggedIn: success, tutorialDone: tutorialDone });
     }, [APP_NAME, getUserInfo, token]);
 
     useEffect(() => {
@@ -55,17 +58,24 @@ export default function App() {
     //   RENDER
     // #################################################
 
-    if (userLoaded === null) return null;
+    const { loggedIn, tutorialDone } = userData;
+
+    if (loggedIn === null) return null;
 
     // Wrong orientation on phones
     if (isMobile && isLandscape) return <Landscape />;
 
     // Login or Register
-    if (!userLoaded) return <Onboarding />;
+    if (!loggedIn) return <Onboarding />;
 
     // Do the tutorial
-    const tutorialDone = ls.get(`${APP_NAME}_tutorialStatus`);
-    if (!tutorialDone) return <Tutorial />;
+    if (!tutorialDone)
+        return (
+            <>
+                <Popup />
+                <Tutorial />
+            </>
+        );
 
     // Main Game
     return (

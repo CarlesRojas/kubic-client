@@ -19,14 +19,6 @@ export default function Onboarding() {
     const [error, setError] = useState("");
 
     // #################################################
-    //   ONBOARDING DONE
-    // #################################################
-
-    const handleOnboardingDone = () => {
-        emit("refreshApp");
-    };
-
-    // #################################################
     //   CHECK VALIDITY
     // #################################################
 
@@ -46,7 +38,7 @@ export default function Onboarding() {
 
             setLoading(false);
             loadingRef.current = false;
-        } else handleOnboardingDone();
+        } else emit("refreshApp");
     }, 1500);
 
     // #################################################

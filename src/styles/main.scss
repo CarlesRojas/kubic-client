@@ -485,7 +485,8 @@
 //      PLAY
 // #######################################
 
-.Input {
+.Input,
+.TutorialInput {
     position: absolute;
     display: flex;
     align-items: center;
@@ -524,8 +525,8 @@
     }
 }
 
-.UI {
-    pointer-events: none;
+.UI,
+.TutorialUI {
     pointer-events: none;
     position: absolute;
     display: flex;
@@ -626,5 +627,63 @@
     right: 0;
     bottom: 0;
     left: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     background: rgb(161, 217, 255);
+}
+
+.TutorialUI {
+    .gameContainer {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        h1 {
+            margin-top: 1rem;
+            padding: 0 2rem;
+            width: 100%;
+            max-width: 25rem;
+            opacity: 0.8;
+            font-size: 1.6rem;
+            font-weight: 800;
+            text-align: center;
+        }
+
+        p {
+            margin-top: 0.5rem;
+            padding: 0 2rem;
+            width: 100%;
+            max-width: 25rem;
+            opacity: 0.5;
+            font-size: 1rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .nextButton {
+            margin-top: 1rem;
+            pointer-events: none;
+            transition: all 0.2s ease-in-out;
+            min-width: fit-content;
+            z-index: 40;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+            background-color: white;
+            color: rgba(0, 0, 0, 0.7);
+            border-radius: 100vw;
+            padding: 0.6rem 2rem;
+            font-weight: 800;
+            font-size: 1.1rem;
+            text-align: center;
+            text-transform: uppercase;
+            opacity: 0;
+
+            &.visible {
+                pointer-events: all;
+                opacity: 1;
+            }
+        }
+    }
 }
