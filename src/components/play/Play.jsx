@@ -210,9 +210,16 @@ export default function Play() {
         globalState.set("navbarVisible", true);
     }, [showPopup, globalState]);
 
-    const handleAppClose = () => {
-        gameController.current.pauseGame();
+    const gameSavedBeforeClose = useRef(false);
+
+    const handleAppClose = (event) => {
+        event.preventDefault();
+        if (gameSavedBeforeClose.current) return;
+        gameSavedBeforeClose.current = true;
+
         gameController.current.save();
+
+        event.returnValue = "";
     };
 
     // #################################################
@@ -225,6 +232,9 @@ export default function Play() {
         events.sub("stayInApp", handleStayInApp);
         events.sub("gameLost", handleGameLost);
         window.addEventListener("beforeunload", handleAppClose);
+        window.addEventListener("pagehide", handleAppClose);
+        window.addEventListener("onunload", handleAppClose);
+        window.addEventListener("blur", handleAppClose);
 
         return () => {
             events.unsub("pauseGame", handlePauseGame);
@@ -232,6 +242,9 @@ export default function Play() {
             events.unsub("stayInApp", handleStayInApp);
             events.unsub("gameLost", handleGameLost);
             window.removeEventListener("beforeunload", handleAppClose);
+            window.removeEventListener("pagehide", handleAppClose);
+            window.removeEventListener("onunload", handleAppClose);
+            window.removeEventListener("blur", handleAppClose);
         };
     }, [events, handleStayInApp, handlePauseGame, handleMaybeCloseApp, handleGameLost]);
 
