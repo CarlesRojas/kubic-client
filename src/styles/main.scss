@@ -617,6 +617,20 @@
 //      SETTINGS
 // #######################################
 
+.Settings {
+    .contentContainer {
+        .button {
+            background-color: $redBack;
+            color: $red;
+
+            &.low {
+                background-color: rgba(0, 0, 0, 0.05);
+                color: rgba(0, 0, 0, 0.5);
+            }
+        }
+    }
+}
+
 // #######################################
 //      TUTORIAL
 // #######################################
