@@ -8,13 +8,13 @@ const API_URL = "https://kubic3d.herokuapp.com/"; // "http://localhost:3100/";
 
 export const API = createContext();
 const APIProvider = (props) => {
-    const { APP_NAME } = useContext(Data);
+    const { APP_NAME, token } = useContext(Data);
 
-    const validateUsername = async (username) => {
-        const postData = { username };
+    const loginOrRegister = async (username, password) => {
+        const postData = { username, password };
 
         try {
-            const rawResponse = await fetch(`${API_URL}${API_VERSION}/score/validateUsername`, {
+            const rawResponse = await fetch(`${API_URL}${API_VERSION}/loginOrRegister`, {
                 method: "post",
                 headers: {
                     Accept: "application/json, text/plain, */*",
@@ -26,48 +26,60 @@ const APIProvider = (props) => {
 
             const response = await rawResponse.json();
 
-            if ("newScoreEntry" in response) return response.newScoreEntry;
+            // Save token
+            if ("token" in response) {
+                token.current = response.token;
+                ls.set(`${APP_NAME}_token`, response.token);
+            }
 
             return response;
         } catch (error) {
-            return { error: "Error registering nickname" };
+            return { error: "Login or Register error" };
         }
     };
 
-    const getUser = async (username) => {
-        const postData = { username };
-
+    const getUserInfo = async () => {
         try {
-            const rawResponse = await fetch(`${API_URL}${API_VERSION}/score/getUser`, {
-                method: "post",
+            const rawResponse = await fetch(`${API_URL}${API_VERSION}/getUserInfo`, {
+                method: "get",
                 headers: {
                     Accept: "application/json, text/plain, */*",
                     "Content-Type": "application/json",
                     "Access-Control-Allow-Origin": "*",
+                    token: token.current,
                 },
-                body: JSON.stringify(postData),
             });
 
             const response = await rawResponse.json();
 
-            if ("user" in response) return response.user;
+            // Save new user
+            if ("error" in response) {
+                ls.clear();
+                return false;
+            }
 
-            return response;
+            ls.set(`${APP_NAME}_username`, response.username);
+            ls.set(`${APP_NAME}_score`, response.highestScore);
+            ls.set(`${APP_NAME}_tutorialStatus`, response.tutorialDone);
+
+            return true;
         } catch (error) {
-            return { error: "Error registering nickname" };
+            ls.clear();
+            return false;
         }
     };
 
-    const setScore = async (username, score) => {
-        const postData = { username, score };
+    const setHighScore = async (score) => {
+        const postData = { score };
 
         try {
-            const rawResponse = await fetch(`${API_URL}${API_VERSION}/score/setScore`, {
+            const rawResponse = await fetch(`${API_URL}${API_VERSION}/setHighScore`, {
                 method: "post",
                 headers: {
                     Accept: "application/json, text/plain, */*",
                     "Content-Type": "application/json",
                     "Access-Control-Allow-Origin": "*",
+                    token: token.current,
                 },
                 body: JSON.stringify(postData),
             });
@@ -84,12 +96,13 @@ const APIProvider = (props) => {
 
     const getTopThree = async () => {
         try {
-            const rawResponse = await fetch(`${API_URL}${API_VERSION}/score/setScore`, {
+            const rawResponse = await fetch(`${API_URL}${API_VERSION}/getTopThree`, {
                 method: "get",
                 headers: {
                     Accept: "application/json, text/plain, */*",
                     "Content-Type": "application/json",
                     "Access-Control-Allow-Origin": "*",
+                    token: token.current,
                 },
             });
 
@@ -101,18 +114,16 @@ const APIProvider = (props) => {
         }
     };
 
-    const getPeopleAroundYou = async (username) => {
-        const postData = { username };
-
+    const getPeopleAroundYou = async () => {
         try {
-            const rawResponse = await fetch(`${API_URL}${API_VERSION}/score/getPeopleAroundYou`, {
-                method: "post",
+            const rawResponse = await fetch(`${API_URL}${API_VERSION}/getPeopleAroundYou`, {
+                method: "get",
                 headers: {
                     Accept: "application/json, text/plain, */*",
                     "Content-Type": "application/json",
                     "Access-Control-Allow-Origin": "*",
+                    token: token.current,
                 },
-                body: JSON.stringify(postData),
             });
 
             const response = await rawResponse.json();
@@ -123,14 +134,45 @@ const APIProvider = (props) => {
         }
     };
 
+    const setTutorialStatus = async (tutorialDone) => {
+        const postData = { tutorialDone };
+
+        if (!tutorialDone) {
+            ls.set(`${APP_NAME}_tutorialStatus`, tutorialDone);
+            return { success: "" };
+        }
+
+        try {
+            const rawResponse = await fetch(`${API_URL}${API_VERSION}/setTutorialStatus`, {
+                method: "post",
+                headers: {
+                    Accept: "application/json, text/plain, */*",
+                    "Content-Type": "application/json",
+                    "Access-Control-Allow-Origin": "*",
+                    token: token.current,
+                },
+                body: JSON.stringify(postData),
+            });
+
+            const response = await rawResponse.json();
+
+            if (!("error" in response)) ls.set(`${APP_NAME}_tutorialStatus`, tutorialDone);
+
+            return response;
+        } catch (error) {
+            return { error: "Error setting tutorial status" };
+        }
+    };
+
     return (
         <API.Provider
             value={{
-                validateUsername,
-                getUser,
-                setScore,
+                loginOrRegister,
+                getUserInfo,
+                setHighScore,
                 getTopThree,
                 getPeopleAroundYou,
+                setTutorialStatus,
             }}
         >
             {props.children}

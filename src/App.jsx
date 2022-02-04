@@ -16,9 +16,9 @@ import { API } from "./contexts/API";
 
 export default function App() {
     const { isMobile, isLandscape } = useContext(MediaQuery);
-    const { APP_NAME } = useContext(Data);
+    const { APP_NAME, token } = useContext(Data);
     const { sub, unsub } = useContext(Events);
-    const { getUser } = useContext(API);
+    const { getUserInfo } = useContext(API);
 
     // #################################################
     //   CLOSE APP POPUP
@@ -30,34 +30,17 @@ export default function App() {
     //   LOAD DATA
     // #################################################
 
-    const [data, setData] = useState({ userLoaded: null, tutorialDone: null });
-
-    const getUserData = useCallback(
-        async (usernameCookie) => {
-            if (!usernameCookie) return false;
-
-            const user = await getUser(usernameCookie);
-
-            if ("error" in user) {
-                ls.clear();
-                return false;
-            }
-
-            ls.set(`${APP_NAME}_username`, user.username);
-            ls.set(`${APP_NAME}_score`, user.score);
-
-            return true;
-        },
-        [APP_NAME, getUser]
-    );
+    const [userLoaded, setUserLoaded] = useState(null);
 
     const handleRefreshApp = useCallback(async () => {
-        const usernameCookie = ls.get(`${APP_NAME}_username`);
-        const userLoaded = await getUserData(usernameCookie);
+        const tokenInCookie = ls.get(`${APP_NAME}_token`);
 
-        const tutorialDoneCookie = ls.get(`${APP_NAME}_tutorialDone`);
-        setData({ userLoaded, tutorialDone: tutorialDoneCookie || false });
-    }, [APP_NAME, getUserData]);
+        if (!tokenInCookie) return setUserLoaded(false);
+
+        token.current = tokenInCookie;
+        const success = await getUserInfo();
+        setUserLoaded(success);
+    }, [APP_NAME, getUserInfo, token]);
 
     useEffect(() => {
         sub("refreshApp", handleRefreshApp);
@@ -72,13 +55,19 @@ export default function App() {
     //   RENDER
     // #################################################
 
-    const { userLoaded, tutorialDone } = data;
+    if (userLoaded === null) return null;
 
-    if (userLoaded === null && tutorialDone === null) return null;
+    // Wrong orientation on phones
     if (isMobile && isLandscape) return <Landscape />;
 
+    // Login or Register
     if (!userLoaded) return <Onboarding />;
-    // if (!tutorialDone) return <Tutorial />;
+
+    // Do the tutorial
+    const tutorialDone = ls.get(`${APP_NAME}_tutorialStatus`);
+    if (!tutorialDone) return <Tutorial />;
+
+    // Main Game
     return (
         <>
             <Popup />

@@ -287,6 +287,13 @@
             margin-bottom: 0;
         }
 
+        &.inputTitle {
+            opacity: 0.8;
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-bottom: 0.3rem;
+        }
+
         &.subtitle {
             opacity: 0.5;
             font-size: 0.8rem;
@@ -350,7 +357,11 @@
         padding: 0.8rem 1.6rem;
         font-weight: 700;
         text-align: center;
-        text-transform: uppercase;
+
+        &.first {
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+        }
     }
 
     .button {
@@ -432,9 +443,9 @@
 
     .contentContainer {
         position: absolute;
-        top: 5rem;
+        top: 1rem;
         transition: transform 0.5s ease-in-out;
-        transition-delay: 0.5s;
+        transition-delay: 0.2s;
         transform: translateY(-100vh);
 
         &.visible {

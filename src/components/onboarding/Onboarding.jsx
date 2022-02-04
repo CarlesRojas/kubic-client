@@ -13,19 +13,19 @@ import Logo from "../../resources/icons/tetris.svg";
 import BackgroundImage from "../../resources/images/Onboarding.png";
 
 export default function Onboarding() {
-    const { validateUsername } = useContext(API);
+    const { loginOrRegister } = useContext(API);
     const { APP_NAME } = useContext(Data);
     const { emit } = useContext(Events);
 
-    const nickname = useRef("");
+    const username = useRef("");
+    const password = useRef("");
     const [error, setError] = useState("");
 
     // #################################################
     //   ONBOARDING DONE
     // #################################################
 
-    const handleOnboardingDone = (validationResult) => {
-        ls.set(`${APP_NAME}_username`, validationResult.username);
+    const handleOnboardingDone = () => {
         emit("refreshApp");
     };
 
@@ -33,29 +33,35 @@ export default function Onboarding() {
     //   CHECK VALIDITY
     // #################################################
 
-    const validatingRef = useRef(false);
-    const [validating, setValidating] = useState(false);
+    const loadingRef = useRef(false);
+    const [loading, setLoading] = useState(false);
 
     const handleEnter = useThrottle(async () => {
-        if (validatingRef.current) return;
-        validatingRef.current = true;
-        setValidating(true);
+        if (loadingRef.current) return;
 
-        var validationResult = await validateUsername(nickname.current);
+        loadingRef.current = true;
+        setLoading(true);
 
-        if ("error" in validationResult) {
-            setError(validationResult.error.replaceAll(`"`, ""));
-            setValidating(false);
-            validatingRef.current = false;
-        } else handleOnboardingDone(validationResult);
+        var result = await loginOrRegister(username.current, password.current);
+
+        if ("error" in result) {
+            setError(result.error.replaceAll(`"`, ""));
+
+            setLoading(false);
+            loadingRef.current = false;
+        } else handleOnboardingDone();
     }, 1500);
 
     // #################################################
     //   HANDLERS
     // #################################################
 
-    const handleChange = (event) => {
-        nickname.current = event.target.value.toLowerCase();
+    const handleUsernameChange = (event) => {
+        username.current = event.target.value.toLowerCase();
+    };
+
+    const handlePasswordChange = (event) => {
+        password.current = event.target.value;
     };
 
     const handleKeyDown = (event) => {
@@ -66,11 +72,11 @@ export default function Onboarding() {
     //    FOCUS
     // #################################################
 
-    const inputRef = useRef();
+    const usernameInputRef = useRef();
     const [visible, setVisible] = useState(false);
 
     useEffect(() => {
-        inputRef.current.focus();
+        usernameInputRef.current.focus();
         setVisible(true);
     }, []);
 
@@ -90,22 +96,32 @@ export default function Onboarding() {
                 <SVG className="logo" src={Logo}></SVG>
                 <h1>KUBIC</h1>
 
-                <p>{"Enter a nickname."}</p>
+                <p>{"Login or Register"}</p>
+
+                <p className="inputTitle">{"username"}</p>
                 <input
-                    className="input"
-                    type={"text"}
+                    className="input first"
+                    type="text"
                     autoComplete="new-password"
-                    onChange={handleChange}
-                    ref={inputRef}
-                    title="nickname"
+                    onChange={handleUsernameChange}
+                    ref={usernameInputRef}
+                    title="username"
                     placeholder=""
                     maxLength="12"
                 />
-                <p className={cn("error", { visible: error.length > 0 })}>
-                    {error || "Mollit aliqua ex veniam laboris Mollit aliqua ex veniam laboris"}
-                </p>
 
-                <div className={cn("loading", { visible: validating })}>
+                <p className="inputTitle">{"password"}</p>
+                <input
+                    className="input"
+                    type="password"
+                    autoComplete="new-password"
+                    onChange={handlePasswordChange}
+                    title="password"
+                    placeholder=""
+                />
+
+                <p className={cn("error", { visible: !loading && error.length > 0 })}>{error || "-"}</p>
+                <div className={cn("loading", { visible: loading })}>
                     <SVG className="icon rotateQuarters infinite" src={Logo}></SVG>
                 </div>
 
@@ -113,7 +129,7 @@ export default function Onboarding() {
                     ENTER
                 </div>
 
-                <p className="subtitle">{"This will be publicly visible along with your highest score."}</p>
+                <p className="subtitle">{"Your username will be publicly visible along with your highest score."}</p>
             </div>
         </div>
     );

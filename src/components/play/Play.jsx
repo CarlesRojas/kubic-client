@@ -23,7 +23,7 @@ export default function Play() {
     const events = useContext(Events);
     const { APP_NAME } = useContext(Data);
     const { vibrate } = useContext(Utils);
-    const { setScore } = useContext(API);
+    const { setHighScore } = useContext(API);
 
     const container = useRef();
     const gameController = useRef();
@@ -182,19 +182,15 @@ export default function Play() {
     }, [gamePaused, showPopup]);
 
     const handleGameLost = useCallback(() => {
-        const username = ls.get(`${APP_NAME}_username`);
         const highestScore = ls.get(`${APP_NAME}_score`);
-
-        if (username && gameController.current.global.score > highestScore)
-            setScore(username, gameController.current.global.score);
+        if (gameController.current.global.score > highestScore) setHighScore(gameController.current.global.score);
 
         ls.remove(`${APP_NAME}_saveData`);
 
         gameController.current.pauseGame();
-
         gameLost.current = true;
         setGamePaused(true);
-    }, [APP_NAME, setScore]);
+    }, [APP_NAME, setHighScore]);
 
     // #################################################
     //   STAY IN APP
