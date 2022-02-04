@@ -613,6 +613,153 @@
 //      SCORES
 // #######################################
 
+.Scores {
+    position: relative;
+    justify-content: unset;
+    $titleSize: 2.5rem;
+
+    .loading {
+        position: relative;
+        transition: opacity 0.2s ease-in-out;
+        width: 100%;
+        height: 6rem;
+        padding: 1.2rem 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        .icon {
+            height: 100%;
+            max-height: 100%;
+            min-height: 100%;
+            color: $iconBottom;
+        }
+    }
+
+    .ranking {
+        position: relative;
+        width: 100%;
+        max-width: 25rem;
+        height: calc(100% - #{$navBarHeight + $navbarPadding * 2 + $titleSize});
+        min-height: calc(100% - #{$navBarHeight + $navbarPadding * 2 + $titleSize});
+        max-height: calc(100% - #{$navBarHeight + $navbarPadding * 2 + $titleSize});
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        padding-bottom: 1rem;
+    }
+
+    .title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: $titleSize;
+        color: $blue;
+        padding-top: 0.5rem;
+    }
+}
+
+.HighScore {
+    width: calc(100% - 1rem);
+    display: flex;
+    margin: 0.5rem 0.5rem 0;
+    padding: 0.5rem;
+    align-items: center;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 1rem;
+
+    &.first {
+        background-color: rgb(255, 248, 188) !important;
+
+        .trophy {
+            opacity: 1;
+            padding: 0.1rem;
+            color: rgb(255, 211, 17);
+        }
+
+        .score {
+            color: rgba(0, 0, 0, 0.7);
+        }
+    }
+
+    &.second {
+        background-color: rgb(255, 255, 255) !important;
+
+        .trophy {
+            opacity: 1;
+            padding: 0.4rem;
+            color: rgb(238, 238, 238);
+        }
+
+        .score {
+            color: rgba(0, 0, 0, 0.7);
+        }
+    }
+
+    &.third {
+        background-color: rgb(255, 225, 197) !important;
+
+        .trophy {
+            opacity: 1;
+            padding: 0.6rem;
+            color: rgb(253, 174, 99);
+        }
+
+        .score {
+            color: rgba(0, 0, 0, 0.7);
+        }
+    }
+
+    &.me {
+        background-color: rgba(255, 255, 255, 0.8);
+    }
+
+    .trophy {
+        opacity: 0;
+        width: 3rem;
+        min-width: 3rem;
+        max-width: 3rem;
+        height: 3rem;
+        min-height: 3rem;
+        max-height: 3rem;
+        filter: drop-shadow(0 2px 1px rgba(0, 0, 0, 0.6));
+    }
+
+    .username {
+        text-transform: uppercase;
+        flex-grow: 1;
+        padding: 0 1.5rem;
+        font-size: 1rem;
+        font-weight: 700;
+    }
+
+    .score {
+        padding: 0 1rem;
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: $blue;
+    }
+
+    .number {
+        width: 3rem;
+        min-width: 3rem;
+        max-width: 3rem;
+        height: 3rem;
+        min-height: 3rem;
+        max-height: 3rem;
+        padding: 0 1rem;
+        font-size: 1.3rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0.4;
+    }
+}
+
 // #######################################
 //      SETTINGS
 // #######################################

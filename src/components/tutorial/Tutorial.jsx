@@ -10,6 +10,7 @@ import useResize from "../../hooks/useResize";
 import { GlobalState } from "../../contexts/GlobalState";
 import { Events } from "../../contexts/Events";
 import { API } from "../../contexts/API";
+import { Utils } from "../../contexts/Utils";
 
 import Logo from "../../resources/icons/tetris.svg";
 
@@ -45,6 +46,7 @@ export default function Tutorial() {
     const globalState = useContext(GlobalState);
     const events = useContext(Events);
     const { setTutorialStatus } = useContext(API);
+    const { vibrate } = useContext(Utils);
 
     const container = useRef();
     const tutorialController = useRef();
@@ -85,10 +87,11 @@ export default function Tutorial() {
     // #################################################
 
     const handleTutorialFinished = useCallback(async () => {
+        vibrate(40);
         await setTutorialStatus(true);
 
         events.emit("refreshApp");
-    }, [events, setTutorialStatus]);
+    }, [events, setTutorialStatus, vibrate]);
 
     const handleStageDone = () => {
         events.emit("tutorialStageDone");
@@ -98,6 +101,7 @@ export default function Tutorial() {
     const handleNextStage = () => {
         if (stage.current >= STAGES.length - 1) return handleTutorialFinished();
 
+        vibrate(40);
         setStage((prev) => ({ current: prev.current + 1, done: false }));
     };
 
@@ -120,7 +124,13 @@ export default function Tutorial() {
 
                     <p>Get the basics down with this quick tutorial</p>
 
-                    <div className="button middle" onClick={() => setPopupVisible(false)}>
+                    <div
+                        className="button middle"
+                        onClick={() => {
+                            vibrate(40);
+                            setPopupVisible(false);
+                        }}
+                    >
                         START TUTORIAL
                     </div>
 
@@ -130,7 +140,7 @@ export default function Tutorial() {
                 </>
             ),
         });
-    }, [globalState, popupVisible, handleTutorialFinished]);
+    }, [globalState, popupVisible, handleTutorialFinished, vibrate]);
 
     useEffect(() => {
         togglePopup();

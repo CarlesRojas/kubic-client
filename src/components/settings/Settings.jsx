@@ -1,4 +1,4 @@
-import { useState, useCallback, useContext, useEffect } from "react";
+import { useCallback, useContext } from "react";
 import cn from "classnames";
 import SVG from "react-inlinesvg";
 
