@@ -37,59 +37,80 @@
     "screenshots": [
         {
             "src": "screenshot1.png",
-            "sizes": "720x1529",
+            "sizes": "1080x2292",
             "type": "image/png",
             "platform": "narrow",
-            "label": "Fasting Screen"
+            "label": "Kubic Game 1"
         },
         {
             "src": "screenshot2.png",
-            "sizes": "720x1529",
+            "sizes": "1080x2292",
             "type": "image/png",
             "platform": "narrow",
-            "label": "Health Screen"
+            "label": "Kubic Game Start"
         },
         {
             "src": "screenshot3.png",
-            "sizes": "720x1529",
+            "sizes": "1080x2292",
             "type": "image/png",
             "platform": "narrow",
-            "label": "Hitoric Screen"
+            "label": "Kubic Menu"
         },
         {
             "src": "screenshot4.png",
-            "sizes": "720x1529",
+            "sizes": "1080x2292",
             "type": "image/png",
             "platform": "narrow",
-            "label": "Enter Height Popup"
+            "label": "Kubic World Scoreboard"
         },
         {
             "src": "screenshot5.png",
-            "sizes": "720x1529",
+            "sizes": "1080x2292",
             "type": "image/png",
             "platform": "narrow",
-            "label": "Fasting Done Screen"
+            "label": "Kubic Game 2"
+        },
+        {
+            "src": "screenshot6.png",
+            "sizes": "1080x2292",
+            "type": "image/png",
+            "platform": "narrow",
+            "label": "Kubic Game 3"
         },
         {
             "src": "screenshotWide1.png",
             "sizes": "1280x720",
             "type": "image/png",
             "platform": "wide",
-            "label": "Home Screen"
+            "label": "Kubic Game 1"
         },
         {
             "src": "screenshotWide2.png",
             "sizes": "1280x720",
             "type": "image/png",
             "platform": "wide",
-            "label": "Fasting Phase Explained"
+            "label": "Kubic Game Start"
         },
         {
             "src": "screenshotWide3.png",
             "sizes": "1280x720",
             "type": "image/png",
             "platform": "wide",
-            "label": "Enter Height Popup"
+            "label": "Kubic Menu"
+        },
+        {
+            "src": "screenshotWide3.png",
+            "sizes": "1280x720",
+            "type": "image/png",
+            "platform": "wide",
+            "label": "Kubic World Scoreboard"
+        },
+        {
+            "src": "screenshotWide3.png",
+            "sizes": "1280x720",
+            "type": "image/png",
+            "platform": "wide",
+            "label": "Kubic Game 2"
         }
     ],
     "orientation": "any",
