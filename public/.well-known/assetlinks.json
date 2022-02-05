@@ -1,1 +1,12 @@
-[]
+[
+    {
+        "relation": ["delegate_permission/common.handle_all_urls"],
+        "target": {
+            "namespace": "android_app",
+            "package_name": "app.pinya.kubic",
+            "sha256_cert_fingerprints": [
+                "4D:20:97:BE:41:09:20:E6:E5:53:DC:A6:1A:20:B2:15:24:BD:0E:24:92:92:00:3E:4B:F4:6C:27:9D:C4:40:CF"
+            ]
+        }
+    }
+]
