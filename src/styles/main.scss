@@ -1,484 +1,303 @@
-@import "./variables";
-@import "./global";
-@import "./desktop";
-@import "./tablet";
-@import "./landscape";
-@import "./notTouchscreen";
-@import "./animations";
+@import './variables';
+@import './global';
+@import './desktop';
+@import './tablet';
+@import './landscape';
+@import './notTouchscreen';
+@import './animations';
 
 // #######################################
 //      LAYOUT
 // #######################################
 
 .Landscape {
-    pointer-events: none;
-    position: absolute;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    width: 100%;
-    top: 0;
-    left: 0;
-    z-index: 50;
-    background: $background1;
-    background: linear-gradient(-180deg, $background1 0%, $background2 100%);
+  pointer-events: none;
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  z-index: 50;
+  background: $background1;
+  background: linear-gradient(-180deg, $background1 0%, $background2 100%);
 }
 
 .Loading {
-    pointer-events: none;
+  pointer-events: none;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s ease-in-out;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  background-color: $background;
+  opacity: 0;
+
+  &.visible {
+    pointer-events: all;
+    opacity: 1;
+  }
+
+  .icon {
+    height: 2.5rem;
+    max-height: 2.5rem;
+    min-height: 2.5rem;
+    width: 2.5rem;
+    max-width: 2.5rem;
+    min-width: 2.5rem;
+    color: black;
+    opacity: 0.3;
+  }
+}
+
+.Popup {
+  pointer-events: none;
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+
+  .blur {
+    pointer-events: all;
     position: absolute;
+    height: 100%;
+    width: 100%;
+    z-index: 15;
+
+    &.inFrontOfNavbar {
+      z-index: 25;
+    }
+  }
+}
+
+.contentContainer {
+  pointer-events: all;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: height 0.2s ease-in-out;
+  height: fit-content;
+  max-height: 90%;
+  width: calc(100% - 2rem);
+  max-width: 30rem;
+  z-index: 30;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 1rem;
+  padding: 2rem;
+
+  .logo {
+    height: 3rem;
+    max-height: 3rem;
+    min-height: 3rem;
+    width: 3rem;
+    max-width: 3rem;
+    min-width: 3rem;
+    color: $purple;
+    margin-bottom: -1rem;
+  }
+
+  h1 {
+    width: 100%;
+    opacity: 0.8;
+    margin-bottom: 1.5rem;
+    font-size: 2rem;
+    font-weight: 800;
+    text-align: center;
+  }
+
+  p {
+    width: 100%;
+    opacity: 0.8;
+    margin-bottom: 1.5rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-align: center;
+
+    &.score {
+      margin-bottom: 0;
+    }
+
+    &.scoreValue {
+      margin-bottom: 1.5rem;
+      font-size: 2.5rem;
+      font-weight: 700;
+
+      &.high {
+        margin-bottom: 0;
+      }
+    }
+
+    &.highScore {
+      color: $purple;
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+
+    &.yourScore {
+      opacity: 0.8;
+      margin: 1.5rem 0 0;
+      font-size: 0.9rem;
+    }
+
+    &.yourScoreValue {
+      margin-bottom: 0;
+      font-size: 2rem;
+      font-weight: 700;
+    }
+
+    &.inputTitle {
+      opacity: 0.8;
+      margin-bottom: 0.3rem;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    &.error {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.2s ease-in-out;
+      height: 2.5rem;
+      color: rgb(224, 56, 26);
+      opacity: 0;
+      margin: 1rem 0;
+      margin-bottom: 0;
+      font-size: 0.9rem;
+      font-weight: 600;
+
+      &.visible {
+        opacity: 1;
+      }
+    }
+  }
+
+  .loading {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: opacity 0.2s ease-in-out;
-    height: 100%;
+    height: 4.5rem;
     width: 100%;
-    top: 0;
-    left: 0;
-    background-color: $background;
     opacity: 0;
+    margin-top: -4.5rem;
+    padding: 1.2rem 0;
 
     &.visible {
-        pointer-events: all;
-        opacity: 1;
+      opacity: 1;
     }
 
     .icon {
-        height: 2.5rem;
-        max-height: 2.5rem;
-        min-height: 2.5rem;
-        width: 2.5rem;
-        max-width: 2.5rem;
-        min-width: 2.5rem;
-        color: black;
-        opacity: 0.3;
+      height: 100%;
+      max-height: 100%;
+      min-height: 100%;
+      color: rgba(0, 0, 0, 0.5);
     }
-}
+  }
 
-.MainLayout {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    width: 100%;
-    background: $background1;
-    background: linear-gradient(-180deg, $background1 0%, $background2 100%);
-
-    .mainPagesContent {
-        position: relative;
-        height: 100%;
-        width: 100%;
-    }
-}
-
-.Navbar {
-    position: absolute;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: transform 0.2s ease-in-out;
-    transform: translateY($navBarHeight + $navbarPadding * 2);
-    height: $navBarHeight;
-    width: fit-content;
-    bottom: 0;
-    z-index: 20;
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
-    background-color: $navBarBackground;
-    margin: $navbarPadding 0;
-    border-radius: 100vw;
-    padding: $navbarPadding 0;
-
-    &.visible {
-        transform: translateY(0);
-    }
-
-    .container {
-        position: relative;
-        display: flex;
-        align-items: center;
-        transition: background-color 0.2s ease-in-out, width 0.2s ease-in-out;
-        height: 100%;
-        width: calc(2rem + #{$navBarHeight * 0.4});
-        background-color: transparent;
-        margin: 0 $navbarPadding;
-        border-radius: 100vw;
-        padding: 0 1rem;
-
-        &.selected {
-            width: 8rem;
-            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1) inset;
-            background-color: $blueBack !important;
-
-            &.navbarScores {
-                background-color: $orangeBack;
-            }
-
-            &.navbarPlay {
-                background-color: $purpleBack;
-            }
-
-            &.navbarSettings {
-                background-color: $greenBack;
-            }
-
-            .icon {
-                color: $blue !important;
-
-                &.navbarScores {
-                    color: $orange;
-                }
-
-                &.navbarPlay {
-                    color: $purple;
-                }
-
-                &.navbarSettings {
-                    color: $green;
-                }
-            }
-
-            .name {
-                transition: opacity 0.05s 0.15s ease-in-out, width 0.2s ease-in-out;
-                width: 5rem;
-                opacity: 1;
-            }
-        }
-
-        .icon {
-            transition: color 0.2s ease-in-out;
-            height: $navBarHeight * 0.4;
-            max-height: $navBarHeight * 0.4;
-            min-height: $navBarHeight * 0.4;
-            width: $navBarHeight * 0.4;
-            max-width: $navBarHeight * 0.4;
-            min-width: $navBarHeight * 0.4;
-            color: $background2;
-        }
-
-        .name {
-            transition: opacity 0.05s ease-in-out, width 0.2s ease-in-out;
-            width: 0%;
-            color: $blue !important;
-            opacity: 0;
-            padding-left: 0.5rem;
-            font-size: 0.95rem;
-            font-weight: 700;
-            text-align: center;
-
-            &.navbarScores {
-                color: $orange;
-            }
-
-            &.navbarPlay {
-                color: $purple;
-            }
-
-            &.navbarSettings {
-                color: $green;
-            }
-        }
-    }
-}
-
-.Popup {
-    pointer-events: none;
-    position: absolute;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    width: 100%;
-    top: 0;
-    left: 0;
-
-    .blur {
-        pointer-events: all;
-        position: absolute;
-        height: 100%;
-        width: 100%;
-        z-index: 15;
-
-        &.inFrontOfNavbar {
-            z-index: 25;
-        }
-    }
-}
-
-.contentContainer {
+  .input {
     pointer-events: all;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    transition: height 0.2s ease-in-out;
-    height: fit-content;
-    max-height: 90%;
-    width: calc(100% - 2rem);
-    max-width: 30rem;
+    transition: all 0.2s ease-in-out;
+    width: 20rem;
+    min-width: fit-content;
+    z-index: 40;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    background-color: white;
+    color: balck;
+    border-radius: 100vw;
+    padding: 0.8rem 1.6rem;
+    font-weight: 700;
+    text-align: center;
+
+    &.first {
+      margin-bottom: 1.5rem;
+      text-transform: uppercase;
+    }
+  }
+
+  .button {
+    pointer-events: all;
+    transition: all 0.2s ease-in-out;
+    width: 15rem;
+    min-width: fit-content;
+    z-index: 40;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1) inset;
+    background-color: $purpleBack;
+    color: $purple;
+    border-radius: 100vw;
+    padding: 0.8rem 1.6rem;
+    font-weight: 800;
+    text-align: center;
+    text-transform: uppercase;
+
+    &.middle {
+      margin-bottom: 1rem;
+    }
+
+    &.low {
+      background-color: rgba(0, 0, 0, 0.05);
+      color: rgba(0, 0, 0, 0.5);
+    }
+  }
+
+  .subtitle {
+    opacity: 0.6;
+    margin-bottom: 0;
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+  }
+
+  .message {
+    position: absolute;
+    transition: opacity 0.2s ease-in-out;
+    top: 100%;
+    right: 0;
+    left: 0;
     z-index: 30;
+    overflow: hidden;
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
     background-color: rgba(255, 255, 255, 0.8);
+    color: rgba(0, 0, 0, 0.7);
+    opacity: 0;
+    margin: 1rem 0 0;
     border-radius: 1rem;
-    padding: 2rem;
+    padding: 1rem 2rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-align: center;
 
-    .logo {
-        height: 3rem;
-        max-height: 3rem;
-        min-height: 3rem;
-        width: 3rem;
-        max-width: 3rem;
-        min-width: 3rem;
-        color: $purple;
-        margin-bottom: -1rem;
+    &.visible {
+      opacity: 1;
     }
-
-    h1 {
-        width: 100%;
-        opacity: 0.8;
-        margin-bottom: 1.5rem;
-        font-size: 2rem;
-        font-weight: 800;
-        text-align: center;
-    }
-
-    p {
-        width: 100%;
-        opacity: 0.8;
-        margin-bottom: 1.5rem;
-        font-size: 1.2rem;
-        font-weight: 600;
-        text-align: center;
-
-        &.score {
-            margin-bottom: 0;
-        }
-
-        &.scoreValue {
-            margin-bottom: 1.5rem;
-            font-size: 2.5rem;
-            font-weight: 700;
-
-            &.high {
-                margin-bottom: 0;
-            }
-        }
-
-        &.highScore {
-            color: $purple;
-            font-size: 1.2rem;
-            font-weight: 700;
-        }
-
-        &.yourScore {
-            opacity: 0.8;
-            margin: 1.5rem 0 0;
-            font-size: 0.9rem;
-        }
-
-        &.yourScoreValue {
-            margin-bottom: 0;
-            font-size: 2rem;
-            font-weight: 700;
-        }
-
-        &.inputTitle {
-            opacity: 0.8;
-            margin-bottom: 0.3rem;
-            font-size: 0.8rem;
-            font-weight: 500;
-        }
-
-        &.subtitle {
-            opacity: 0.5;
-            margin-bottom: 0;
-            font-size: 0.8rem;
-            font-weight: 500;
-        }
-
-        &.error {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: opacity 0.2s ease-in-out;
-            height: 2.5rem;
-            color: rgb(224, 56, 26);
-            opacity: 0;
-            margin: 1rem 0;
-            margin-bottom: 0;
-            font-size: 0.9rem;
-            font-weight: 600;
-
-            &.visible {
-                opacity: 1;
-            }
-        }
-    }
-
-    .loading {
-        position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: opacity 0.2s ease-in-out;
-        height: 4.5rem;
-        width: 100%;
-        opacity: 0;
-        margin-top: -4.5rem;
-        padding: 1.2rem 0;
-
-        &.visible {
-            opacity: 1;
-        }
-
-        .icon {
-            height: 100%;
-            max-height: 100%;
-            min-height: 100%;
-            color: rgba(0, 0, 0, 0.5);
-        }
-    }
-
-    .input {
-        pointer-events: all;
-        transition: all 0.2s ease-in-out;
-        width: 20rem;
-        min-width: fit-content;
-        z-index: 40;
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-        background-color: white;
-        color: balck;
-        border-radius: 100vw;
-        padding: 0.8rem 1.6rem;
-        font-weight: 700;
-        text-align: center;
-
-        &.first {
-            margin-bottom: 1.5rem;
-            text-transform: uppercase;
-        }
-    }
-
-    .button {
-        pointer-events: all;
-        transition: all 0.2s ease-in-out;
-        width: 15rem;
-        min-width: fit-content;
-        z-index: 40;
-        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1) inset;
-        background-color: $purpleBack;
-        color: $purple;
-        border-radius: 100vw;
-        padding: 0.8rem 1.6rem;
-        font-weight: 800;
-        text-align: center;
-        text-transform: uppercase;
-
-        &.middle {
-            margin-bottom: 1rem;
-        }
-
-        &.low {
-            background-color: rgba(0, 0, 0, 0.05);
-            color: rgba(0, 0, 0, 0.5);
-        }
-    }
-
-    .message {
-        position: absolute;
-        transition: opacity 0.2s ease-in-out;
-        top: 100%;
-        right: 0;
-        left: 0;
-        z-index: 30;
-        overflow: hidden;
-        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
-        background-color: rgba(255, 255, 255, 0.8);
-        color: rgba(0, 0, 0, 0.7);
-        opacity: 0;
-        margin: 1rem 0 0;
-        border-radius: 1rem;
-        padding: 1rem 2rem;
-        font-size: 0.9rem;
-        font-weight: 600;
-        text-align: center;
-
-        &.visible {
-            opacity: 1;
-        }
-    }
+  }
 }
 
 .Scores,
 .Play,
 .Settings {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    width: 100%;
-}
-
-// #######################################
-//      ONBOARDING
-// #######################################
-
-.Onboarding {
-    position: absolute;
-    display: flex;
-    justify-content: center;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    background: $background1;
-    background: linear-gradient(-180deg, $background1 0%, $background2 100%);
-
-    .contentContainer {
-        position: absolute;
-        transition: transform 0.5s ease-in-out;
-        transition-delay: 0.2s;
-        transform: translateY(-100vh);
-        top: 1rem;
-
-        &.visible {
-            transform: translateY(0);
-        }
-    }
-
-    .blur {
-        pointer-events: all;
-        position: absolute;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        backdrop-filter: blur(10px);
-    }
-
-    .backgroundImage {
-        position: absolute;
-        display: flex;
-        justify-content: center;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-
-        img {
-            position: absolute;
-            width: 70%;
-            max-width: 25rem;
-            top: 3rem;
-        }
-    }
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
 }
 
 // #######################################
@@ -486,146 +305,146 @@
 // #######################################
 
 .Play {
-    .playContainer {
-        position: absolute;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-    }
+  .playContainer {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+  }
 }
 
 .Input,
 .TutorialInput {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  touch-action: none;
+
+  .moveTetro {
     position: absolute;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    flex-grow: 1;
     top: 0;
     right: 0;
     bottom: 0;
     left: 0;
     touch-action: none;
+  }
 
-    .moveTetro {
-        position: absolute;
-        display: flex;
-        flex-grow: 1;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        touch-action: none;
+  .gamaBoundingBox {
+    pointer-events: none;
+    position: relative;
+
+    .rotateTetro {
+      pointer-events: all;
+      position: absolute;
+      transform: translate3d(-50%, -50%, 0);
+      box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+      background: rgba(0, 0, 0, 0.05);
+      background: radial-gradient(circle, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.1) 100%);
+      border-radius: 100vw;
+      touch-action: none;
     }
-
-    .gamaBoundingBox {
-        pointer-events: none;
-        position: relative;
-
-        .rotateTetro {
-            pointer-events: all;
-            position: absolute;
-            transform: translate3d(-50%, -50%, 0);
-            box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
-            background: rgba(0, 0, 0, 0.05);
-            background: radial-gradient(circle, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.1) 100%);
-            border-radius: 100vw;
-            touch-action: none;
-        }
-    }
+  }
 }
 
 .UI,
 .TutorialUI {
-    pointer-events: none;
-    position: absolute;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    z-index: 10;
+  pointer-events: none;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 10;
 
-    .gameContainer {
-        position: relative;
+  .gameContainer {
+    position: relative;
 
-        .topIcons {
-            position: absolute;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            top: 0;
-            right: 0;
-            left: 0;
+    .topIcons {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      top: 0;
+      right: 0;
+      left: 0;
 
-            .score {
-                color: $iconTop;
-                font-size: 2rem;
-                font-weight: 700;
-                text-align: center;
-            }
+      .score {
+        color: $iconTop;
+        font-size: 2rem;
+        font-weight: 700;
+        text-align: center;
+      }
 
-            .nextTetromino {
-                pointer-events: none;
-                height: 100%;
-                max-height: 100%;
-                min-height: 100%;
-                padding: 0.5rem 0.5rem 0 0;
-            }
-        }
-
-        .rotateBaseIcons {
-            position: absolute;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            right: 0;
-            bottom: 11%;
-            left: 0;
-        }
-
-        .autoFallIcons {
-            position: absolute;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            right: 0;
-            bottom: 0;
-            left: 0;
-        }
-
-        .icon {
-            pointer-events: all;
-            transition: opacity 0.2s ease-in-out;
-            height: 100%;
-            max-height: 100%;
-            min-height: 100%;
-            color: $iconBottom;
-            padding: 3%;
-
-            &.top {
-                color: $iconTop;
-            }
-
-            &.reflectVertical {
-                transform: scaleY(-1);
-            }
-
-            &.gamePaused {
-                opacity: 0;
-            }
-
-            &.hidden {
-                opacity: 0;
-            }
-        }
+      .nextTetromino {
+        pointer-events: none;
+        height: 100%;
+        max-height: 100%;
+        min-height: 100%;
+        padding: 0.5rem 0.5rem 0 0;
+      }
     }
+
+    .rotateBaseIcons {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      right: 0;
+      bottom: 11%;
+      left: 0;
+    }
+
+    .autoFallIcons {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      right: 0;
+      bottom: 0;
+      left: 0;
+    }
+
+    .icon {
+      pointer-events: all;
+      transition: opacity 0.2s ease-in-out;
+      height: 100%;
+      max-height: 100%;
+      min-height: 100%;
+      color: $iconBottom;
+      padding: 3%;
+
+      &.top {
+        color: $iconTop;
+      }
+
+      &.reflectVertical {
+        transform: scaleY(-1);
+      }
+
+      &.gamePaused {
+        opacity: 0;
+      }
+
+      &.hidden {
+        opacity: 0;
+      }
+    }
+  }
 }
 
 // #######################################
@@ -633,168 +452,51 @@
 // #######################################
 
 .Scores {
-    $titleSize: 2.5rem;
+  $titleSize: 2.5rem;
+  position: relative;
+  justify-content: unset;
+
+  .loading {
     position: relative;
-    justify-content: unset;
-
-    .loading {
-        position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: opacity 0.2s ease-in-out;
-        height: 6rem;
-        width: 100%;
-        padding: 1.2rem 0;
-
-        .icon {
-            height: 100%;
-            max-height: 100%;
-            min-height: 100%;
-            color: $iconBottom;
-        }
-    }
-
-    .ranking {
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        height: calc(100% - #{$navBarHeight + $navbarPadding * 2 + $titleSize});
-        max-height: calc(100% - #{$navBarHeight + $navbarPadding * 2 + $titleSize});
-        min-height: calc(100% - #{$navBarHeight + $navbarPadding * 2 + $titleSize});
-        width: 100%;
-        max-width: 25rem;
-        overflow-y: auto;
-        padding-bottom: 1rem;
-    }
-
-    .title {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: $titleSize;
-        color: $blue;
-        padding-top: 0.5rem;
-        font-size: 1.3rem;
-        font-weight: 700;
-    }
-}
-
-.HighScore {
     display: flex;
     align-items: center;
-    width: calc(100% - 1rem);
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
-    background-color: rgba(255, 255, 255, 0.2);
-    margin: 0.5rem 0.5rem 0;
-    border-radius: 1rem;
-    padding: 0.5rem;
+    justify-content: center;
+    transition: opacity 0.2s ease-in-out;
+    height: 6rem;
+    width: 100%;
+    padding: 1.2rem 0;
 
-    &.first {
-        background-color: rgb(255, 248, 188) !important;
-
-        .trophy {
-            color: rgb(255, 211, 17);
-            opacity: 1;
-            padding: 0.1rem;
-        }
-
-        .score {
-            color: rgba(0, 0, 0, 0.7);
-        }
+    .icon {
+      height: 100%;
+      max-height: 100%;
+      min-height: 100%;
+      color: $iconBottom;
     }
+  }
 
-    &.second {
-        background-color: rgb(255, 255, 255) !important;
+  .ranking {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: calc(100% - #{$navBarHeight + $navbarPadding * 2 + $titleSize});
+    max-height: calc(100% - #{$navBarHeight + $navbarPadding * 2 + $titleSize});
+    min-height: calc(100% - #{$navBarHeight + $navbarPadding * 2 + $titleSize});
+    width: 100%;
+    max-width: 25rem;
+    overflow-y: auto;
+    padding-bottom: 1rem;
+  }
 
-        .trophy {
-            color: rgb(238, 238, 238);
-            opacity: 1;
-            padding: 0.4rem;
-        }
-
-        .score {
-            color: rgba(0, 0, 0, 0.7);
-        }
-    }
-
-    &.third {
-        background-color: rgb(255, 225, 197) !important;
-
-        .trophy {
-            color: rgb(253, 174, 99);
-            opacity: 1;
-            padding: 0.6rem;
-        }
-
-        .score {
-            color: rgba(0, 0, 0, 0.7);
-        }
-    }
-
-    &.me {
-        background-color: rgba(255, 255, 255, 0.8);
-    }
-
-    .trophy {
-        height: 3rem;
-        max-height: 3rem;
-        min-height: 3rem;
-        width: 3rem;
-        max-width: 3rem;
-        min-width: 3rem;
-        filter: drop-shadow(0 2px 1px rgba(0, 0, 0, 0.6));
-        opacity: 0;
-    }
-
-    .username {
-        flex-grow: 1;
-        padding: 0 1.5rem;
-        font-size: 1rem;
-        font-weight: 700;
-        text-transform: uppercase;
-    }
-
-    .score {
-        color: $blue;
-        padding: 0 1rem;
-        font-size: 1.4rem;
-        font-weight: 700;
-    }
-
-    .number {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 3rem;
-        max-height: 3rem;
-        min-height: 3rem;
-        width: 3rem;
-        max-width: 3rem;
-        min-width: 3rem;
-        opacity: 0.4;
-        padding: 0 1rem;
-        font-size: 1.3rem;
-        font-weight: 600;
-    }
-}
-
-// #######################################
-//      SETTINGS
-// #######################################
-
-.Settings {
-    .contentContainer {
-        .button {
-            background-color: $redBack;
-            color: $red;
-
-            &.low {
-                background-color: rgba(0, 0, 0, 0.05);
-                color: rgba(0, 0, 0, 0.5);
-            }
-        }
-    }
+  .title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: $titleSize;
+    color: $blue;
+    padding-top: 0.5rem;
+    font-size: 1.3rem;
+    font-weight: 700;
+  }
 }
 
 // #######################################
@@ -802,77 +504,77 @@
 // #######################################
 
 .Tutorial {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: rgb(161, 217, 255);
+
+  .tutorialContainer {
     position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     top: 0;
     right: 0;
     bottom: 0;
     left: 0;
-    background: rgb(161, 217, 255);
-
-    .tutorialContainer {
-        position: absolute;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-    }
+  }
 }
 
 .TutorialUI {
-    .gameContainer {
-        pointer-events: none;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        z-index: 40;
+  .gameContainer {
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 40;
 
-        h1 {
-            width: 100%;
-            max-width: 25rem;
-            opacity: 0.8;
-            margin-top: 1rem;
-            padding: 0 2rem;
-            font-size: 1.6rem;
-            font-weight: 800;
-            text-align: center;
-        }
-
-        p {
-            width: 100%;
-            max-width: 25rem;
-            opacity: 0.5;
-            margin-top: 0.5rem;
-            padding: 0 2rem;
-            font-size: 1rem;
-            font-weight: 600;
-            text-align: center;
-        }
-
-        .nextButton {
-            pointer-events: none;
-            min-width: fit-content;
-            z-index: 40;
-            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
-            background-color: white;
-            color: rgba(0, 0, 0, 0.7);
-            opacity: 0;
-            margin-top: 1rem;
-            border-radius: 100vw;
-            padding: 0.6rem 2rem;
-            font-size: 1.1rem;
-            font-weight: 800;
-            text-align: center;
-            text-transform: uppercase;
-
-            &.visible {
-                pointer-events: all;
-                opacity: 1;
-            }
-        }
+    h1 {
+      width: 100%;
+      max-width: 25rem;
+      opacity: 0.8;
+      margin-top: 1rem;
+      padding: 0 2rem;
+      font-size: 1.6rem;
+      font-weight: 800;
+      text-align: center;
     }
+
+    p {
+      width: 100%;
+      max-width: 25rem;
+      opacity: 0.5;
+      margin-top: 0.5rem;
+      padding: 0 2rem;
+      font-size: 1rem;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .nextButton {
+      pointer-events: none;
+      min-width: fit-content;
+      z-index: 40;
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+      background-color: white;
+      color: rgba(0, 0, 0, 0.7);
+      opacity: 0;
+      margin-top: 1rem;
+      border-radius: 100vw;
+      padding: 0.6rem 2rem;
+      font-size: 1.1rem;
+      font-weight: 800;
+      text-align: center;
+      text-transform: uppercase;
+
+      &.visible {
+        pointer-events: all;
+        opacity: 1;
+      }
+    }
+  }
 }

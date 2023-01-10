@@ -1,6 +1,55 @@
-@import "./variables";
-@import "./global";
-@import "./animations";
+@import './variables';
+@import './global';
+@import './animations';
 
 .isNotTouchscreen {
+  .contentContainer {
+    .button {
+      cursor: pointer;
+
+      &:hover {
+        scale: 1.05;
+      }
+    }
+
+    .subtitle {
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+
+  .UI,
+  .TutorialUI {
+    .gameContainer {
+      .icon {
+        cursor: pointer;
+
+        &:hover {
+          filter: brightness(0.8);
+        }
+      }
+
+      .nextButton {
+        cursor: pointer;
+
+        &:hover {
+          scale: 1.05;
+        }
+      }
+    }
+  }
+
+  .Input,
+  .TutorialInput {
+    .gamaBoundingBox {
+      .rotateTetro {
+        cursor: grab;
+
+        &:active {
+          cursor: grabbing;
+        }
+      }
+    }
+  }
 }

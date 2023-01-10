@@ -1,166 +1,165 @@
-import { useRef, useEffect, useContext, useCallback, useState } from "react";
-import SVG from "react-inlinesvg";
+import ls from 'local-storage';
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import SVG from 'react-inlinesvg';
 
-import TutorialInput from "./TutorialInput";
-import TutorialUI from "./TutorialUI";
-import TutorialController from "../../game/TutorialController";
+import TutorialController from '../../game/TutorialController';
+import TutorialInput from './TutorialInput';
+import TutorialUI from './TutorialUI';
 
-import useResize from "../../hooks/useResize";
+import useResize from '../../hooks/useResize';
 
-import { GlobalState } from "../../contexts/GlobalState";
-import { Events } from "../../contexts/Events";
-import { API } from "../../contexts/API";
-import { Utils } from "../../contexts/Utils";
+import { Events } from '../../contexts/Events';
+import { GlobalState } from '../../contexts/GlobalState';
+import { Utils } from '../../contexts/Utils';
 
-import Logo from "../../resources/icons/tetris.svg";
+import Logo from '../../resources/icons/tetris.svg';
 
 const STAGES = [
-    {
-        title: "Rotate along the Y axis",
-        subtitle: "Swipe left or right on the bubble",
-    },
-    {
-        title: "Rotate along the X axis",
-        subtitle: "Swipe up or down on the left side of the bubble",
-    },
-    {
-        title: "Rotate along the Z axis",
-        subtitle: "Swipe up or down on the right side of the bubble",
-    },
-    {
-        title: "Move the piece",
-        subtitle: "Swipe outside the bubble",
-    },
-    {
-        title: "Place down",
-        subtitle: "Click the arrows below the floor, or swipe down with two fingers outside the bubble",
-    },
-    {
-        title: "Rotate level",
-        subtitle:
-            "Click the arrows to the left and right of the floor, or swipe left or right with two fingers outside the bubble",
-    },
+  {
+    title: 'Rotate along the Y axis',
+    subtitle: 'Swipe left or right on the bubble'
+  },
+  {
+    title: 'Rotate along the X axis',
+    subtitle: 'Swipe up or down on the left side of the bubble'
+  },
+  {
+    title: 'Rotate along the Z axis',
+    subtitle: 'Swipe up or down on the right side of the bubble'
+  },
+  {
+    title: 'Move the piece',
+    subtitle: 'Swipe outside the bubble'
+  },
+  {
+    title: 'Place down',
+    subtitle: 'Click the arrows below the floor, or swipe down with two fingers outside the bubble'
+  },
+  {
+    title: 'Rotate level',
+    subtitle:
+      'Click the arrows to the left and right of the floor, or swipe left or right with two fingers outside the bubble'
+  }
 ];
 
 export default function Tutorial() {
-    const globalState = useContext(GlobalState);
-    const events = useContext(Events);
-    const { setTutorialStatus } = useContext(API);
-    const { vibrate } = useContext(Utils);
+  const globalState = useContext(GlobalState);
+  const events = useContext(Events);
+  const { vibrate } = useContext(Utils);
 
-    const container = useRef();
-    const tutorialController = useRef();
+  const container = useRef();
+  const tutorialController = useRef();
 
-    const [stage, setStage] = useState({ current: 0, done: false });
+  const [stage, setStage] = useState({ current: 0, done: false });
 
-    // #################################################
-    //   RESIZE
-    // #################################################
+  // #################################################
+  //   RESIZE
+  // #################################################
 
-    const handleResize = () => {
-        const width = container.current.clientWidth;
-        const height = container.current.clientHeight;
+  const handleResize = () => {
+    const width = container.current.clientWidth;
+    const height = container.current.clientHeight;
 
-        tutorialController.current.handleResize({ width, height });
-    };
+    tutorialController.current.handleResize({ width, height });
+  };
 
-    useResize(handleResize, false);
+  useResize(handleResize, false);
 
-    // #################################################
-    //   INIT
-    // #################################################
+  // #################################################
+  //   INIT
+  // #################################################
 
-    const init = useCallback(() => {
-        const width = container.current.clientWidth;
-        const height = container.current.clientHeight;
+  const init = useCallback(() => {
+    const width = container.current.clientWidth;
+    const height = container.current.clientHeight;
 
-        tutorialController.current = new TutorialController();
-        tutorialController.current.init({ globalState, events, width, height, container });
-    }, [globalState, events]);
+    tutorialController.current = new TutorialController();
+    tutorialController.current.init({ globalState, events, width, height, container });
+  }, [globalState, events]);
 
-    useEffect(() => {
-        init();
-    }, [init]);
+  useEffect(() => {
+    init();
+  }, [init]);
 
-    // #################################################
-    //   HANDLERS
-    // #################################################
+  // #################################################
+  //   HANDLERS
+  // #################################################
 
-    const handleTutorialFinished = useCallback(async () => {
-        vibrate(40);
-        await setTutorialStatus(true);
+  const handleTutorialFinished = useCallback(async () => {
+    vibrate(40);
+    ls.set('kubic_tutorialStatus', true);
 
-        events.emit("refreshApp");
-    }, [events, setTutorialStatus, vibrate]);
+    events.emit('refreshApp');
+  }, [events, vibrate]);
 
-    const handleStageDone = () => {
-        events.emit("tutorialStageDone");
-        setStage((prev) => ({ ...prev, done: true }));
-    };
+  const handleStageDone = () => {
+    events.emit('tutorialStageDone');
+    setStage((prev) => ({ ...prev, done: true }));
+  };
 
-    const handleNextStage = () => {
-        if (stage.current >= STAGES.length - 1) return handleTutorialFinished();
+  const handleNextStage = () => {
+    if (stage.current >= STAGES.length - 1) return handleTutorialFinished();
 
-        vibrate(40);
-        setStage((prev) => ({ current: prev.current + 1, done: false }));
-    };
+    vibrate(40);
+    setStage((prev) => ({ current: prev.current + 1, done: false }));
+  };
 
-    // #################################################
-    //   WELCOME
-    // #################################################
+  // #################################################
+  //   WELCOME
+  // #################################################
 
-    const [popupVisible, setPopupVisible] = useState(true);
+  const [popupVisible, setPopupVisible] = useState(true);
 
-    const togglePopup = useCallback(() => {
-        globalState.set("showPopup", {
-            visible: popupVisible,
-            canCloseWithBackground: false,
-            inFrontOfNavbar: false,
-            handleClose: () => null,
-            content: (
-                <>
-                    <SVG className="logo" src={Logo}></SVG>
-                    <h1>{"KUBIC"}</h1>
+  const togglePopup = useCallback(() => {
+    globalState.set('showPopup', {
+      visible: popupVisible,
+      canCloseWithBackground: false,
+      inFrontOfNavbar: false,
+      handleClose: () => null,
+      content: (
+        <>
+          <SVG className="logo" src={Logo}></SVG>
+          <h1>{'KUBIC'}</h1>
 
-                    <p>Get the basics down with this quick tutorial</p>
+          <p>Get the basics down with this quick tutorial</p>
 
-                    <div
-                        className="button middle"
-                        onClick={() => {
-                            vibrate(40);
-                            setPopupVisible(false);
-                        }}
-                    >
-                        START TUTORIAL
-                    </div>
+          <button
+            className="button middle"
+            onClick={() => {
+              vibrate(40);
+              setPopupVisible(false);
+            }}
+          >
+            START TUTORIAL
+          </button>
 
-                    <p className="subtitle" onClick={handleTutorialFinished}>
-                        Skip Tutorial
-                    </p>
-                </>
-            ),
-        });
-    }, [globalState, popupVisible, handleTutorialFinished, vibrate]);
+          <button className="subtitle" onClick={handleTutorialFinished}>
+            Skip Tutorial
+          </button>
+        </>
+      )
+    });
+  }, [globalState, popupVisible, handleTutorialFinished, vibrate]);
 
-    useEffect(() => {
-        togglePopup();
-    }, [togglePopup]);
+  useEffect(() => {
+    togglePopup();
+  }, [togglePopup]);
 
-    // #################################################
-    //   RENDER
-    // #################################################
+  // #################################################
+  //   RENDER
+  // #################################################
 
-    return (
-        <div className="Tutorial">
-            <div className="tutorialContainer" ref={container}></div>
-            <TutorialInput stage={stage} handleStageDone={handleStageDone} />
-            <TutorialUI
-                stage={stage}
-                STAGES={STAGES}
-                handleNextStage={handleNextStage}
-                handleStageDone={handleStageDone}
-                popupVisible={popupVisible}
-            />
-        </div>
-    );
+  return (
+    <div className="Tutorial">
+      <div className="tutorialContainer" ref={container}></div>
+      <TutorialInput stage={stage} handleStageDone={handleStageDone} />
+      <TutorialUI
+        stage={stage}
+        STAGES={STAGES}
+        handleNextStage={handleNextStage}
+        handleStageDone={handleStageDone}
+        popupVisible={popupVisible}
+      />
+    </div>
+  );
 }

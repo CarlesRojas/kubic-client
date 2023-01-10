@@ -1,87 +1,68 @@
-import { useContext, useEffect, useState, useCallback } from "react";
-import ls from "local-storage";
+import ls from 'local-storage';
+import { useCallback, useContext, useEffect, useState } from 'react';
 
-import Onboarding from "./components/onboarding/Onboarding";
-import Tutorial from "./components/tutorial/Tutorial";
-import MainLayout from "./components/layout/MainLayout";
-import Landscape from "./components/layout/Landscape";
-import Popup from "./components/layout/Popup";
+import Landscape from './components/layout/Landscape';
+import Popup from './components/layout/Popup';
+import Tutorial from './components/tutorial/Tutorial';
 
-import useCloseApp from "./hooks/useCloseApp";
+import useCloseApp from './hooks/useCloseApp';
 
-import { MediaQuery } from "./contexts/MediaQuery";
-import { Data } from "./contexts/Data";
-import { Events } from "./contexts/Events";
-import { API } from "./contexts/API";
+import Play from './components/play/Play';
+import { Events } from './contexts/Events';
+import { MediaQuery } from './contexts/MediaQuery';
 
 export default function App() {
-    const { isMobile, isLandscape } = useContext(MediaQuery);
-    const { APP_NAME, token } = useContext(Data);
-    const { sub, unsub } = useContext(Events);
-    const { getUserInfo } = useContext(API);
+  const { isMobile, isLandscape } = useContext(MediaQuery);
+  const { sub, unsub } = useContext(Events);
 
-    // #################################################
-    //   CLOSE APP POPUP
-    // #################################################
+  // #################################################
+  //   CLOSE APP POPUP
+  // #################################################
 
-    useCloseApp();
+  useCloseApp();
 
-    // #################################################
-    //   LOAD DATA
-    // #################################################
+  // #################################################
+  //   LOAD DATA
+  // #################################################
 
-    const [userData, setUserData] = useState({ loggedIn: null, tutorialDone: null });
+  const [tutorialDone, setTutorialDone] = useState(ls.get('kubic_tutorialStatus'));
 
-    const handleRefreshApp = useCallback(async () => {
-        const tokenInCookie = ls.get(`${APP_NAME}_token`);
+  const handleRefreshApp = useCallback(async () => {
+    const tutorialDone = ls.get('kubic_tutorialStatus');
 
-        if (!tokenInCookie) return setUserData(false);
+    setTutorialDone(tutorialDone);
+  }, []);
 
-        token.current = tokenInCookie;
-        const success = await getUserInfo();
+  useEffect(() => {
+    sub('refreshApp', handleRefreshApp);
+    handleRefreshApp();
 
-        const tutorialDone = ls.get(`${APP_NAME}_tutorialStatus`);
+    return () => {
+      unsub('refreshApp', handleRefreshApp);
+    };
+  }, [sub, unsub, handleRefreshApp]);
 
-        setUserData({ loggedIn: success, tutorialDone: tutorialDone });
-    }, [APP_NAME, getUserInfo, token]);
+  // #################################################
+  //   RENDER
+  // #################################################
 
-    useEffect(() => {
-        sub("refreshApp", handleRefreshApp);
-        handleRefreshApp();
+  // Wrong orientation on phones
+  if (isMobile && isLandscape) return <Landscape />;
 
-        return () => {
-            unsub("refreshApp", handleRefreshApp);
-        };
-    }, [sub, unsub, handleRefreshApp]);
-
-    // #################################################
-    //   RENDER
-    // #################################################
-
-    const { loggedIn, tutorialDone } = userData;
-
-    if (loggedIn === null) return null;
-
-    // Wrong orientation on phones
-    if (isMobile && isLandscape) return <Landscape />;
-
-    // Login or Register
-    if (!loggedIn) return <Onboarding />;
-
-    // Do the tutorial
-    if (!tutorialDone)
-        return (
-            <>
-                <Popup />
-                <Tutorial />
-            </>
-        );
-
-    // Main Game
+  // Do the tutorial
+  if (!tutorialDone)
     return (
-        <>
-            <Popup />
-            <MainLayout />
-        </>
+      <>
+        <Popup />
+        <Tutorial />
+      </>
     );
+
+  // Main Game
+  return (
+    <>
+      <Popup />
+      <Play />
+    </>
+  );
 }
